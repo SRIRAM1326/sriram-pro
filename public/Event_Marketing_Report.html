@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Marketing Professional - Comprehensive Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --glass: rgba(255, 255, 255, 0.7);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --leather-color: #2563eb;
+            --book-color: #dc2626;
+            --ed-color: #0d9488;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0 1.5rem;
+        }
+
+        .nav-container a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-container a:hover {
+            color: var(--primary);
+        }
+
+        /* Animations */
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .shimmer-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent);
+            transform: translateX(-100%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered delays */
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        @keyframes mesh {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .hero {
+            background: linear-gradient(-45deg, #1e3a8a, #0f172a, #1e40af, #1e3a8a);
+            background-size: 400% 400%;
+            animation: mesh 15s ease infinite;
+            color: white;
+            padding: 6rem 1.5rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            animation: pulse 15s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            background: var(--accent);
+            color: #000;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .author-info {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .author-item span {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+        }
+
+        .author-item p {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 5rem 1.5rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* Overview Section */
+        .overview-box {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            margin-bottom: 3rem;
+        }
+
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .method-item {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .method-icon {
+            font-size: 2rem;
+            min-width: 50px;
+        }
+
+        /* Event Cards */
+        .event-detail {
+            margin-bottom: 6rem;
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f1f5f9;
+        }
+
+        .event-banner {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            padding: 0 3rem;
+            color: white;
+        }
+
+        .event-banner.leather {
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+        }
+
+        .event-banner.book {
+            background: linear-gradient(90deg, #991b1b, #ef4444);
+        }
+
+        .event-banner.ed {
+            background: linear-gradient(90deg, #0f766e, #14b8a6);
+        }
+
+        .event-content {
+            padding: 3rem;
+        }
+
+        .event-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+        }
+
+        @media (max-width: 900px) {
+            .event-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .data-group {
+            margin-bottom: 2.5rem;
+        }
+
+        .data-group h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card span {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .stat-card strong {
+            font-size: 1.25rem;
+            color: var(--primary-dark);
+        }
+
+        /* Lists */
+        .detailed-list {
+            list-style: none;
+        }
+
+        .detailed-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .detailed-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            background: #f1f5f9;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Timeline */
+        .timeline {
+            margin-top: 2rem;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 10px;
+            width: 12px;
+            height: 12px;
+            background: var(--book-color);
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .timeline-year {
+            font-weight: 800;
+            color: var(--book-color);
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 4rem 1.5rem;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-weight: 800;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Tags */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            background: #f1f5f9;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="nav-container">
+            <a href="#overview">Overview</a>
+            <a href="#leather">Leather Expo</a>
+            <a href="#bookfair">Book Fair</a>
+            <a href="#ed-pavilion">ED Pavilion</a>
+            <a href="#comparison">Comparison</a>
+            <a href="#outcomes">Outcomes</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container">
+            <div class="badge">PROJECT UCM20602L</div>
+            <h1>Event Marketing Professional</h1>
+            <p style="font-size: 1.25rem; opacity: 0.9; max-width: 800px; margin: 0 auto 2.5rem;">
+                A comprehensive strategic analysis of three high-impact events: Industrial, Cultural, and Educational.
+            </p>
+
+            <div class="author-info">
+                <div class="author-item">
+                    <span>Researcher</span>
+                    <p>M. Sriram</p>
+                </div>
+                <div class="author-item">
+                    <span>Registration No</span>
+                    <p>RA2031204020024</p>
+                </div>
+                <div class="author-item">
+                    <span>Institution</span>
+                    <p>SRM Institute of Science & Technology</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="overview" class="reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2>Project Overview</h2>
+                <p>Establishing the foundation of event marketing excellence.</p>
+            </div>
+
+            <div class="overview-box">
+                <h3
+                    style="margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 0.5rem;">
+                    Research Methodology</h3>
+                <p>This report employs a dual-channel research methodology to gather qualitative and quantitative data
+                    from diverse event sectors within the Chennai region.</p>
+
+                <div class="methodology-grid">
+                    <div class="method-item reveal reveal-delay-1">
+                        <div class="method-icon">📊</div>
+                        <div>
+                            <strong style="display: block; font-size: 1.1rem;">Primary Research</strong>
+                            <p style="font-size: 0.95rem; color: var(--text-muted);">Direct observation of event flow,
+                                stall placements, and visitor engagement patterns at 2023 venues.</p>
+                        </div>
+                    </div>
+                    <div class="method-item reveal reveal-delay-2">
+                        <div class="method-icon">🔍</div>
+                        <div>
+                            <strong style="display: block; font-size: 1.1rem;">Secondary Research</strong>
+                            <p style="font-size: 0.95rem; color: var(--text-muted);">Analysis of official balance
+                                sheets, organizer reports (BAPASI/ITCOT), and historical press releases.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERNATIONAL LEATHER EXPO -->
+    <section id="leather" style="background: #fff;">
+        <div class="container">
+            <div class="event-detail">
+                <div class="event-banner leather">
+                    <h2>01. International Leather Expo</h2>
+                </div>
+                <div class="event-content">
+                    <div class="event-grid">
+                        <div>
+                            <div class="data-group reveal reveal-delay-1">
+                                <h4>📅 Event Logistics</h4>
+                                <p><strong>Dates:</strong> Feb 1-3, 2023</p>
+                                <p><strong>Venue:</strong> Chennai Trade Centre (CTC), Nandanam</p>
+                                <p><strong>Operating Hours:</strong> 10:00 AM - 6:00 PM</p>
+                            </div>
+
+                            <div class="data-group reveal reveal-delay-2">
+                                <h4>💼 Top 10 Industry Participants</h4>
+                                <div class="tag-cloud">
+                                    <span class="tag">Dr Eberle Clever Chemistry</span>
+                                    <span class="tag">K.B. Polychem</span>
+                                    <span class="tag">RIKA</span>
+                                    <span class="tag">Ring Maschinen</span>
+                                    <span class="tag">Blue Hawk International</span>
+                                    <span class="tag">Eco Shoe Accessories</span>
+                                    <span class="tag">Techno Marketing</span>
+                                    <span class="tag">New Gen Garment Industry</span>
+                                    <span class="tag">Bader GMBH</span>
+                                    <span class="tag">Desma Schuhmaschinen</span>
+                                </div>
+                            </div>
+
+                            <div class="data-group reveal reveal-delay-3">
+                                <h4>🎒 Leather Categories Showcased</h4>
+                                <ul class="detailed-list" style="columns: 2;">
+                                    <li>Full Grain Leather</li>
+                                    <li>Genuine Leather</li>
+                                    <li>Nubuck Leather</li>
+                                    <li>Bonded Leather</li>
+                                    <li>Deerskin Leather</li>
+                                    <li>Goatskin Leather</li>
+                                    <li>Lambskin Leather</li>
+                                    <li>Bridal Leather</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="data-group">
+                                <h4>💰 Budget Breakdown (₹42.8 Lakhs)</h4>
+                                <div class="stat-list" style="grid-template-columns: 1fr;">
+                                    <div class="stat-card">
+                                        <span>Venue Rental</span>
+                                        <strong>₹10,00,000</strong>
+                                    </div>
+                                    <div class="stat-card">
+                                        <span>Professional Speakers</span>
+                                        <strong>₹4,50,000</strong>
+                                    </div>
+                                    <div class="stat-card">
+                                        <span>Exhibition Decoration</span>
+                                        <strong>₹2,00,000</strong>
+                                    </div>
+                                    <div class="stat-card">
+                                        <span>Miscellaneous/Ops</span>
+                                        <strong>₹20,00,000</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="data-group"
+                                style="background: #1e40af; color: white; padding: 2rem; border-radius: 20px;">
+                                <h4 style="color: rgba(255,255,255,0.7);">Total Impact</h4>
+                                <p style="font-size: 2.5rem; font-weight: 800;">100,000+</p>
+                                <p>Exhibition Visitors</p>
+                                <hr style="margin: 1rem 0; opacity: 0.2;">
+                                <p><strong>300+</strong> Exhibitors Across 5 Venues</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHENNAI BOOK FAIR -->
+    <section id="bookfair">
+        <div class="container">
+            <div class="event-detail">
+                <div class="event-banner book">
+                    <h2>02. Chennai Book Fair 2023</h2>
+                </div>
+                <div class="event-content">
+                    <div class="event-grid">
+                        <div>
+                            <div class="data-group">
+                                <h4>📜 46th Edition Overview</h4>
+                                <p>Inaugurated by Hon'ble Chief Minister MK Stalin, the 2023 Book Fair was a milestone
+                                    cultural event spanning 17 days at the YMCA College Grounds.</p>
+                            </div>
+
+                            <div class="data-group">
+                                <h4>🏛️ Historical Milestones</h4>
+                                <div class="timeline">
+                                    <div class="timeline-item">
+                                        <div class="timeline-year">2009</div>
+                                        <p>32nd Fair at St. George's. Reached 1M visitors and ₹270M in sales for the
+                                            first time.</p>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-year">2013</div>
+                                        <p>36th Fair moved to YMCA. Featured 747 stalls and 1 million+ titles.</p>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-year">2016</div>
+                                        <p>Flood Recovery: Rescheduled to June. Despite ₹25Cr industry loss, it drew
+                                            major crowds.</p>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-year">2023</div>
+                                        <p>46th Fair: International segment added with publishers from 40+ countries.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="data-group">
+                                <h4>✨ Special 2023 Features</h4>
+                                <ul class="detailed-list">
+                                    <li>First-ever International Book Fair segment</li>
+                                    <li>Dedicated Queer Publishing House stall</li>
+                                    <li>100th Kalaignar Award Presentation</li>
+                                    <li>200+ Completely New Stalls</li>
+                                    <li>Author Book Readings & Kids Section</li>
+                                </ul>
+                            </div>
+
+                            <div class="stat-list" style="grid-template-columns: 1fr;">
+                                <div class="stat-card" style="border-left: 5px solid var(--book-color);">
+                                    <span>Total Stalls</span>
+                                    <strong>1,000+ Units</strong>
+                                </div>
+                                <div class="stat-card" style="border-left: 5px solid var(--book-color);">
+                                    <span>Total Visitors</span>
+                                    <strong>600,000+ Participants</strong>
+                                </div>
+                                <div class="stat-card" style="border-left: 5px solid var(--book-color);">
+                                    <span>Available Titles</span>
+                                    <strong>1,000,000+ Books</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ED PAVILION -->
+    <section id="ed-pavilion" style="background: #fff;">
+        <div class="container">
+            <div class="event-detail">
+                <div class="event-banner ed">
+                    <h2>03. ED Pavilion - 23</h2>
+                </div>
+                <div class="event-content">
+                    <div class="event-grid">
+                        <div>
+                            <div class="data-group">
+                                <h4>🎯 Strategic Purpose</h4>
+                                <p>The Entrepreneurship Development (ED) Pavilion was established as a niche innovation
+                                    hub designed to translate student ideas into viable business models.</p>
+                            </div>
+
+                            <div class="data-group">
+                                <h4>🛠️ The 11 Innovation Sectors</h4>
+                                <div class="tag-cloud">
+                                    <span class="tag">Engineering</span>
+                                    <span class="tag">Medical</span>
+                                    <span class="tag">Dental</span>
+                                    <span class="tag">Finance</span>
+                                    <span class="tag">Food & Beverages</span>
+                                    <span class="tag">Entertainment</span>
+                                    <span class="tag">Travel & Tourism</span>
+                                    <span class="tag">Cosmetics</span>
+                                    <span class="tag">Handloom</span>
+                                    <span class="tag">Handicrafts</span>
+                                    <span class="tag">Accessories & Apparels</span>
+                                </div>
+                            </div>
+
+                            <div class="data-group">
+                                <h4>🤝 Services for Startups</h4>
+                                <ul class="detailed-list">
+                                    <li>Pitch Competitions & Feedback</li>
+                                    <li>Digital Marketing Strategy Workshops</li>
+                                    <li>IP & Legal Infrastructure Support</li>
+                                    <li>HR & Talent Management Consulting</li>
+                                    <li>Direct Investor Networking</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="data-group">
+                                <h4>📈 Event Efficiency</h4>
+                                <div class="stat-card" style="margin-bottom: 1rem;">
+                                    <span>Total Budget</span>
+                                    <strong>₹20,000 (Optimized)</strong>
+                                </div>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); padding: 0 1rem;">ED Pavilion
+                                    focuses on high-impact mentoring rather than large-scale vanity metrics.</p>
+                            </div>
+
+                            <div class="data-group">
+                                <h4>📍 Partnership & Venue</h4>
+                                <p><strong>Organizer:</strong> ITCOT & SRM</p>
+                                <p><strong>Primary Venue:</strong> Ramapuram Campus</p>
+                                <p><strong>Target:</strong> 500+ Qualified Student Entrepreneurs</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPARISON -->
+    <section id="comparison">
+        <div class="container">
+            <div class="section-header">
+                <h2>Strategic Comparison</h2>
+                <p>Analyzing the scale and objectives across the three events.</p>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th style="color: var(--leather-color);">Leather Expo</th>
+                            <th style="color: var(--book-color);">Chennai Book Fair</th>
+                            <th style="color: var(--ed-color);">ED Pavilion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Duration</strong></td>
+                            <td>3 Days</td>
+                            <td>17 Days</td>
+                            <td>1 Day</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Target Audience</strong></td>
+                            <td>B2B Industry</td>
+                            <td>General Public</td>
+                            <td>Student Innovators</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Primary Scale</strong></td>
+                            <td>International</td>
+                            <td>National/State</td>
+                            <td>Institutional</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Exhibitor Count</strong></td>
+                            <td>300+</td>
+                            <td>1,000+</td>
+                            <td>50+</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Visitors</strong></td>
+                            <td>100k+</td>
+                            <td>600k+</td>
+                            <td>500+ (Curated)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Budget Type</strong></td>
+                            <td>Corporate (₹42.8L)</td>
+                            <td>Mega-Public</td>
+                            <td>Optimized (₹20K)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- OUTCOMES -->
+    <section id="outcomes" style="background: #f1f5f9;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Key Learning Outcomes</h2>
+                <p>The core takeaways from this comprehensive analysis.</p>
+            </div>
+
+            <div class="overview-box" style="padding: 2rem;">
+                <div class="methodology-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div style="background: white; padding: 2rem; border-radius: 16px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--primary-dark);">⚙️ Execution Excellence</h4>
+                        <p style="font-size: 0.9rem;">Understanding the logistical difference between a 3-day trade expo
+                            and a 17-day public fair.</p>
+                    </div>
+                    <div style="background: white; padding: 2rem; border-radius: 16px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--primary-dark);">🔍 Comprehensive Analysis</h4>
+                        <p style="font-size: 0.9rem;">Ability to extract budget efficiencies and participant ROI across
+                            different sectors.</p>
+                    </div>
+                    <div style="background: white; padding: 2rem; border-radius: 16px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--primary-dark);">🛡️ Safety & Security</h4>
+                        <p style="font-size: 0.9rem;">Managing high-density crowds (600k+) requires specialized security
+                            and layout planning.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">Event Marketing Professional</div>
+            <p>Guided by: Mrs. Anandhi K</p>
+            <p>© 2023 SRM Institute of Science & Technology | M. Sriram</p>
+            <div style="margin-top: 2rem; font-size: 0.75rem; opacity: 0.5;">
+                This report was generated as part of the UCM20602L Project Requirements.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Reveal on scroll
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(el => revealObserver.observe(el));
+
+        // Shimmer effects for important blocks
+        const cards = document.querySelectorAll('.event-detail, .overview-box, .stat-card');
+        cards.forEach(card => card.classList.add('shimmer-wrapper'));
+    </script>
+</body>
+
+</html>

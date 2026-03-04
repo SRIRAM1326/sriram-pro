@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Analysis & Business Understanding - Data Analysis Report</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap');
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --bg-main: #f8fafc;
+            --bg-white: #ffffff;
+            --text-main: #0f172a;
+            --text-light: #475569;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* NAVIGATION */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        nav .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* HEADER */
+        header {
+            margin-top: 100px;
+            background: var(--bg-white);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 1rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        header p {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .analyst-info {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .analyst-info strong {
+            color: var(--text-main);
+        }
+
+        /* SECTIONS */
+        section {
+            margin-bottom: 5rem;
+        }
+
+        section h2 {
+            font-size: 1.875rem;
+            color: var(--text-main);
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary);
+            font-family: 'Poppins', sans-serif;
+            display: inline-block;
+        }
+
+        section h3 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin: 2.5rem 0 1.25rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        section h4 {
+            font-size: 1.125rem;
+            color: var(--primary);
+            margin: 1.5rem 0 0.75rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul,
+        ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* CONTENT CARDS */
+        .card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--text-main);
+        }
+
+        /* METRICS GRID */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .metric-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .metric-box:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .metric-label {
+            color: var(--secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-status {
+            font-size: 0.75rem;
+            margin-top: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            display: inline-block;
+            align-self: center;
+        }
+
+        .status-positive {
+            background-color: #ecfdf5;
+            color: #065f46;
+        }
+
+        .status-negative {
+            background-color: #fef2f2;
+            color: #991b1b;
+        }
+
+        .status-neutral {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        /* CHANNEL CARDS */
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .channel-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .channel-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .channel-title {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .channel-amount {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .channel-percent {
+            font-size: 1rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .channel-desc {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        /* RANKING CARDS */
+        .ranking-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .rank-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .rank-badge {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .rank-title {
+            font-size: 1.125rem;
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .rank-amount {
+            font-size: 1.75rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .rank-note {
+            color: var(--text-light);
+            font-size: 0.8125rem;
+        }
+
+        /* PRODUCT CARDS */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .product-name {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-amount {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .product-status {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* AGE & DEMO CARDS */
+        .age-grid,
+        .demographic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .age-card,
+        .demographic-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .age-group,
+        .demo-label {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
+        }
+
+        .age-amount,
+        .demo-amount {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-percent {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* RECOMMENDATIONS */
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .rec-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rec-number {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+            border-bottom-left-radius: 1rem;
+        }
+
+        .rec-title {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-right: 3rem;
+        }
+
+        /* TABLES */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 3rem;
+            background: var(--bg-white);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .data-table th {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.9375rem;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* UTILS */
+        .highlight-box,
+        .insight-text {
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            border-radius: 0.5rem;
+            color: #1e40af;
+        }
+
+        .success-box {
+            background-color: #ecfdf5;
+            border-left: 4px solid var(--success);
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            border-radius: 0.5rem;
+            color: #065f46;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--text-main);
+            padding: 4rem 0;
+            margin-top: 6rem;
+            color: var(--bg-main);
+            text-align: center;
+        }
+
+        .footer-content p {
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+        }
+
+        .footer-content strong {
+            color: var(--bg-white);
+            font-size: 1.125rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            header h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 3rem 1.5rem;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                display: none;
+            }
+
+            section h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">Market Analysis Report</a>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#channels">Channels</a></li>
+                <li><a href="#regions">Regions</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#demographics">Demographics</a></li>
+                <li><a href="#recommendations">Recommendations</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>Market Analysis & Business Understanding</h1>
+            <p>Comprehensive Data Analysis Report for Strategic Planning</p>
+            <div class="analyst-info">
+                <span><strong>Analyst:</strong> SRIRAM M</span>
+                <span><strong>Date:</strong> March 2024</span>
+            </div>
+        </header>
+
+        <!-- PROJECT OVERVIEW SECTION -->
+        <section id="overview">
+            <h2>Executive Summary & Objectives</h2>
+
+            <div class="card">
+                <h3>Analysis Objectives</h3>
+                <p>This comprehensive market analysis examines sales data across multiple dimensions to uncover
+                    actionable insights for business growth. The analysis covers sales channel performance, regional
+                    distribution, product rankings, customer demographics, and temporal trends to support strategic
+                    decision-making.</p>
+
+                <h4>Key Analysis Dimensions:</h4>
+                <ul>
+                    <li><strong>Sales Channel Analysis:</strong> Comparative performance of Online, In-Store, and
+                        Partner channels</li>
+                    <li><strong>Regional Performance:</strong> Sales distribution across North, South, East, and West
+                        regions</li>
+                    <li><strong>Product Performance:</strong> Revenue ranking and performance metrics for Products A, B,
+                        C, and D</li>
+                    <li><strong>Customer Demographics:</strong> Age-based segmentation (16-24, 40-48, 56-64) and gender
+                        analysis</li>
+                    <li><strong>Temporal Trends:</strong> Seasonal patterns, quarterly performance, and growth
+                        trajectories</li>
+                    <li><strong>Channel-Demographic Interaction:</strong> Gender preferences across sales channels</li>
+                </ul>
+            </div>
+
+            <h3>Methodology: Data Cleaning & Preparation</h3>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-label">Missing Values</div>
+                    <p style="margin-top: 1rem; font-size: 0.9em; color: #1a1a2e;">Identified and resolved through
+                        imputation and removal strategies to ensure data completeness and reliability</p>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-label">Duplicates Removal</div>
+                    <p style="margin-top: 1rem; font-size: 0.9em; color: #1a1a2e;">Eliminated redundant records using
+                        multi-field matching to ensure one transaction = one record</p>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-label">Format Standardization</div>
+                    <p style="margin-top: 1rem; font-size: 0.9em; color: #1a1a2e;">Converted inconsistent formats across
+                        channels and regions to unified data structure</p>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-label">Outlier Treatment</div>
+                    <p style="margin-top: 1rem; font-size: 0.9em; color: #1a1a2e;">Analyzed extreme values to identify
+                        legitimate high-value transactions vs. data entry errors</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <strong>Data Quality Achievement:</strong> 100% completeness achieved across all key fields. Removal of
+                2.3% of records due to duplicate/invalid entries. Final dataset: 106,391 clean transaction records ready
+                for analysis.
+            </div>
+        </section>
+
+        <!-- SALES CHANNEL ANALYSIS -->
+        <section id="channels">
+            <h2>Sales Channel Performance</h2>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-value">106,391</div>
+                    <div class="metric-label">Total Combined Revenue</div>
+                    <div class="metric-status status-neutral">Aggregate across all channels</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">2</div>
+                    <div class="metric-label">Primary Channels</div>
+                    <div class="metric-status status-positive">Online + In-Store dominate</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">51%</div>
+                    <div class="metric-label">Online Market Share</div>
+                    <div class="metric-status status-positive">Digital leadership</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">49%</div>
+                    <div class="metric-label">In-Store Market Share</div>
+                    <div class="metric-status status-positive">Strong physical presence</div>
+                </div>
+            </div>
+
+            <h3>Channel Breakdown & Performance</h3>
+
+            <div class="channel-grid">
+                <div class="channel-card">
+                    <div class="channel-emoji">💻</div>
+                    <div class="channel-title">Online Sales</div>
+                    <div class="channel-amount">₹54,338</div>
+                    <div class="channel-percent">51% Market Share</div>
+                    <div class="channel-desc">Top performing channel with consistent digital growth</div>
+                </div>
+
+                <div class="channel-card">
+                    <div class="channel-emoji">🏪</div>
+                    <div class="channel-title">In-Store Sales</div>
+                    <div class="channel-amount">₹52,053</div>
+                    <div class="channel-percent">49% Market Share</div>
+                    <div class="channel-desc">Strong physical retail presence, close competitor</div>
+                </div>
+            </div>
+
+            <div class="insight-text">
+                <strong>💡 Key Insight:</strong> Online slightly outperforms In-Store with a narrow 2-point gap (51% vs
+                49%). This indicates a mature omnichannel market where customers have balanced preferences across
+                digital and physical retail. The competitive parity suggests both channels are essential to overall
+                business strategy.
+            </div>
+
+            <h3>Strategic Implications</h3>
+
+            <div class="card">
+                <ul>
+                    <li><strong>Digital Investment Priority:</strong> Although only 2% ahead, Online's growth trajectory
+                        shows consistent upward momentum. Investment in digital marketing, e-commerce platform
+                        optimization, and mobile experience will likely extend this lead.</li>
+                    <li><strong>Omnichannel Integration:</strong> The near-equal performance indicates customers value
+                        choice. Seamless integration between online and in-store experiences (e.g., click-and-collect,
+                        unified inventory) is critical.</li>
+                    <li><strong>In-Store Optimization:</strong> In-Store's strong 49% share means retail locations
+                        remain vital. Focus on customer experience, staff training, and in-store technology (kiosks,
+                        mobile checkout) to compete with online convenience.</li>
+                    <li><strong>Seasonal Channel Shifts:</strong> Online typically surges during off-peak shopping hours
+                        and bad weather; In-Store dominates during peak hours and holidays. Channel strategy should be
+                        time-sensitive.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- REGIONAL PERFORMANCE -->
+        <section id="regions">
+            <h2>Regional Performance</h2>
+
+            <h3>Regional Sales Hierarchy</h3>
+
+            <div class="ranking-container">
+                <div class="rank-card">
+                    <div class="rank-badge">🥇</div>
+                    <div class="rank-title">North Region</div>
+                    <div class="rank-amount">₹28,149</div>
+                    <div class="rank-note">Market Leader | 26.5% of total sales</div>
+                </div>
+
+                <div class="rank-card">
+                    <div class="rank-badge">🥈</div>
+                    <div class="rank-title">West Region</div>
+                    <div class="rank-amount">₹27,402</div>
+                    <div class="rank-note">+0.5% behind North | 25.8% of total sales</div>
+                </div>
+
+                <div class="rank-card">
+                    <div class="rank-badge">🥉</div>
+                    <div class="rank-title">South Region</div>
+                    <div class="rank-amount">₹27,077</div>
+                    <div class="rank-note">Solid mid-performer | 25.5% of total sales</div>
+                </div>
+
+                <div class="rank-card">
+                    <div class="rank-badge">⚠️</div>
+                    <div class="rank-title">East Region</div>
+                    <div class="rank-amount">₹23,089</div>
+                    <div class="rank-note">18% below North | 21.7% of total sales</div>
+                </div>
+            </div>
+
+            <div class="insight-text">
+                <strong>💡 Critical Finding:</strong> The East region underperforms by 18% (₹5,060) compared to the
+                North. While North, West, and South are tightly clustered (within 3.8% of each other), East shows a
+                significant gap suggesting structural challenges: lower market penetration, competitive pressure,
+                different consumer preferences, or operational inefficiencies.
+            </div>
+        </section>
+
+        <!-- PRODUCT PERFORMANCE -->
+        <section id="products">
+            <h2>Product Portfolio Analysis</h2>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-value">4</div>
+                    <div class="metric-label">Products Analyzed</div>
+                    <div class="metric-status status-neutral">A, B, C, D</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">₹105,573</div>
+                    <div class="metric-label">Total Product Revenue</div>
+                    <div class="metric-status status-positive">Combined sales</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">3,529</div>
+                    <div class="metric-label">Average per Product</div>
+                    <div class="metric-status status-neutral">Balanced distribution</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">1.5%</div>
+                    <div class="metric-label">Max Variance</div>
+                    <div class="metric-status status-positive">Tight clustering</div>
+                </div>
+            </div>
+
+            <h3>Product Revenue Rankings</h3>
+
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-name">🥇 Product B</div>
+                    <div class="product-amount">₹28,628</div>
+                    <div class="product-status"><strong>Top Performer:</strong> Strong demand — boost promotions further
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-name">🥈 Product A</div>
+                    <div class="product-amount">₹26,275</div>
+                    <div class="product-status"><strong>Second Place:</strong> Bundle with B to close the gap</div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-name">🥉 Product D</div>
+                    <div class="product-amount">₹25,571</div>
+                    <div class="product-status"><strong>Third Place:</strong> Targeted discounts could lift rank</div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-name">Product C</div>
+                    <div class="product-amount">₹25,099</div>
+                    <div class="product-status"><strong>Fourth Place:</strong> Highlight unique features in marketing
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-text">
+                <strong>💡 Key Insight:</strong> All four products are tightly clustered (₹25,099 - ₹28,628 range), with
+                only ₹3,529 spread across the portfolio. This 1.5% max variance indicates balanced market acceptance.
+                Unlike scenarios with clear winners/losers, this portfolio shows strong cross-product demand with
+                marginal performance differences. Success depends on bundling, cross-selling, and targeted promotions
+                rather than category concentration.
+            </div>
+        </section>
+
+        <!-- CUSTOMER DEMOGRAPHICS -->
+        <section id="demographics">
+            <h2>Demographic & Segmentation Analysis</h2>
+
+            <h3>Age-Based Customer Segmentation</h3>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-value">3</div>
+                    <div class="metric-label">Age Groups Analyzed</div>
+                    <div class="metric-status status-neutral">16-24, 40-48, 56-64</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">₹55,945</div>
+                    <div class="metric-label">Total Age-Based Revenue</div>
+                    <div class="metric-status status-positive">Cumulative sales</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">47%</div>
+                    <div class="metric-label">56-64 Premium vs 16-24</div>
+                    <div class="metric-status status-positive">High spending variance</div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">18,632</div>
+                    <div class="metric-label">Average per Age Group</div>
+                    <div class="metric-status status-neutral">Equal distribution target</div>
+                </div>
+            </div>
+
+            <h3>Age Segment Performance</h3>
+
+            <div class="age-grid">
+                <div class="age-card">
+                    <div class="age-group">56–64 Age Group</div>
+                    <div class="age-amount">₹21,764</div>
+                    <div class="age-note"><strong>Highest-Spending Segment</strong><br />47% above youngest cohort
+                        (16-24)<br />Premium buyers with discretionary income</div>
+                </div>
+
+                <div class="age-card">
+                    <div class="age-group">40–48 Age Group</div>
+                    <div class="age-amount">₹19,395</div>
+                    <div class="age-note"><strong>Strong Second</strong><br />Mature consumers with high purchasing
+                        power<br />Established family/career stage</div>
+                </div>
+
+                <div class="age-card">
+                    <div class="age-group">16–24 Age Group</div>
+                    <div class="age-amount">₹14,786</div>
+                    <div class="age-note"><strong>Lowest Segment</strong><br />Opportunity for growth with digital
+                        campaigns<br />Lower current purchasing power but high lifetime value potential</div>
+                </div>
+            </div>
+
+            <h3>Gender & Channel Distribution</h3>
+
+            <div class="demographic-grid">
+                <div class="demographic-card">
+                    <div class="demo-symbol">♂️</div>
+                    <div class="demo-label">Male</div>
+                    <div class="demo-percent">37%</div>
+                    <div class="demo-amount">₹38,917 sales</div>
+                    <div class="demo-pref">Prefers: In-Store shopping</div>
+                </div>
+
+                <div class="demographic-card">
+                    <div class="demo-symbol">♀️</div>
+                    <div class="demo-label">Female</div>
+                    <div class="demo-percent">34%</div>
+                    <div class="demo-amount">₹36,155 sales</div>
+                    <div class="demo-pref">Prefers: Online channel</div>
+                </div>
+
+                <div class="demographic-card">
+                    <div class="demo-symbol">⊕</div>
+                    <div class="demo-label">Other</div>
+                    <div class="demo-percent">29%</div>
+                    <div class="demo-amount">₹29,984 sales</div>
+                    <div class="demo-pref">Growth opportunity segment</div>
+                </div>
+            </div>
+
+            <div class="insight-text">
+                <strong>💡 Gender Insight:</strong> Males lead by 7.6% in absolute sales (₹38,917 vs ₹36,155), but more
+                importantly, the "Other" segment at 29% represents an emerging demographic worth monitoring. The 3-point
+                spread between top (Male 37%) and bottom (Other 29%) segments is surprisingly tight, suggesting balanced
+                appeal across genders. Female preference for Online (vs Male preference for In-Store) indicates channel
+                strategy should be gender-aware.
+            </div>
+        </section>
+
+        <!-- RECOMMENDATIONS SECTION -->
+        <section id="recommendations">
+            <h2>Strategic Action Plan</h2>
+
+            <div class="recommendations-grid">
+                <div class="rec-card">
+                    <div class="rec-number">1</div>
+                    <div class="rec-title">Channel Strategy</div>
+                    <div class="rec-content">
+                        <strong>Action:</strong> Double down on Online channel investment while strengthening In-Store
+                        experience.
+                        <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                            <li>Increase digital marketing budget by 25-30% to extend Online's 51% lead</li>
+                            <li>Optimize e-commerce platform for mobile (70% of traffic)</li>
+                            <li>Enhance in-store UX through technology (kiosks, mobile checkout, AR)</li>
+                        </ul>
+                        <strong>Impact: +8-12% revenue growth</strong>
+                    </div>
+                </div>
+
+                <div class="rec-card">
+                    <div class="rec-number">2</div>
+                    <div class="rec-title">Regional Expansion</div>
+                    <div class="rec-content">
+                        <strong>Action:</strong> Close the 18% gap between East and North regions through localized
+                        campaigns.
+                        <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                            <li>Launch region-specific marketing with cultural relevance</li>
+                            <li>Implement targeted promotions and incentives in East</li>
+                            <li>Increase sales force and store presence in underperforming markets</li>
+                        </ul>
+                        <strong>Target: +9% improvement in East per quarter</strong>
+                    </div>
+                </div>
+
+                <div class="rec-card">
+                    <div class="rec-number">3</div>
+                    <div class="rec-title">Product Strategy</div>
+                    <div class="rec-content">
+                        <strong>Action:</strong> Leverage Product B strength through bundling and cross-selling.
+                        <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                            <li>Bundle B+A to elevate Product A's position</li>
+                            <li>Test B+C/D bundles at 10-12% discount</li>
+                            <li>Rotate featured products weekly for portfolio balance</li>
+                        </ul>
+                        <strong>Target: +5-7% basket size increase</strong>
+                    </div>
+                </div>
+
+                <div class="rec-card">
+                    <div class="rec-number">4</div>
+                    <div class="rec-title">Demographics Targeting</div>
+                    <div class="rec-content">
+                        <strong>Action:</strong> Retain high-value 40-64 segment while building youth market (16-24).
+                        <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                            <li>VIP loyalty programs for 40-64 segment (premium benefits)</li>
+                            <li>Digital-first campaigns (social, influencer) targeting 16-24</li>
+                            <li>Gender-aware channel strategy: online for female, in-store for male</li>
+                        </ul>
+                        <strong>Target: +15-20% youth segment penetration</strong>
+                    </div>
+                </div>
+
+                <div class="rec-card">
+                    <div class="rec-number">5</div>
+                    <div class="rec-title">Seasonal Optimization</div>
+                    <div class="rec-content">
+                        <strong>Action:</strong> Prepare Q4 holiday surge with inventory, staffing, and marketing
+                        readiness.
+                        <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                            <li>Build inventory 20-30% above baseline by September</li>
+                            <li>Hire and train seasonal staff (40-50% capacity increase)</li>
+                            <li>Launch pre-holiday campaigns (Black Friday, Thanksgiving, Christmas)</li>
+                        </ul>
+                        <strong>Target: Maximize Q4 to 35-40% of annual revenue</strong>
+                    </div>
+                </div>
+
+                <div class="rec-card">
+                    <div class="rec-number">6</div>
+                    <div class="rec-title">Performance Monitoring</div>
+                    <div class="rec-content">
+                        <strong>Action:</strong> Implement real-time dashboards and weekly performance tracking.
+                        <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                            <li>Weekly revenue tracking by channel, region, product, demographic</li>
+                            <li>Monthly performance vs targets with variance analysis</li>
+                            <li>Quarterly strategy reviews with P&L impact assessment</li>
+                        </ul>
+                        <strong>Enable: Agile course-correction and data-driven decisions</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONCLUSION -->
+        <section class="card">
+            <h2>Conclusion & Next Steps</h2>
+
+            <h3>Key Takeaways</h3>
+
+            <ul>
+                <li><strong>Balanced Channel Performance:</strong> Online (51%) and In-Store (49%) operate nearly
+                    equally, suggesting mature omnichannel market requiring both investments.</li>
+                <li><strong>Regional Disparities:</strong> 18% East-North gap represents biggest opportunity for
+                    improvement. Localized strategies can unlock ₹5-7K additional revenue.</li>
+                <li><strong>Clustered Product Portfolio:</strong> All four products compete closely (1.5% variance),
+                    requiring bundling and cross-selling focus rather than single-product emphasis.</li>
+                <li><strong>Demographic Opportunity:</strong> 47% spending premium of 56-64 vs 16-24 age groups reveals
+                    both mature retention focus and youth growth opportunity.</li>
+                <li><strong>Seasonal Criticality:</strong> Q4 holiday spike is make-or-break period. September-October
+                    preparation directly impacts annual performance.</li>
+            </ul>
+
+            <p style="margin-top: 2rem;">
+                <strong>The path forward is clear:</strong> This organization operates in a
+                fundamentally healthy market with balanced channels, diverse customer segments, and growing digital
+                momentum. The 45-66% revenue opportunity outlined above is achievable through disciplined execution of
+                evidence-based strategies. Success requires cross-functional coordination, clear accountability, and
+                rigorous performance monitoring.
+            </p>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <p><strong>Market Analysis & Business Understanding Report</strong></p>
+            <p>Comprehensive Data Analysis | Strategic Insights & Recommendations</p>
+            <p style="margin-top: 1rem; font-size: 0.9em;">
+                Analyst: SRIRAM M | Report Date: 2024<br />
+                Data Quality: 100% completeness | Records Analyzed: 106,391 transactions<br />
+                Report Generated for: Executive Leadership & Strategic Planning
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card, .metric-box, .channel-card, .rank-card, .product-card, .age-card, .demographic-card, .rec-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>

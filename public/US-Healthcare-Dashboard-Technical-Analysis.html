@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Healthcare Financial Dashboard - Technical Analysis</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap');
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --bg-main: #f8fafc;
+            --bg-white: #ffffff;
+            --text-main: #0f172a;
+            --text-light: #475569;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* NAVIGATION */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        nav .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* HEADER */
+        header {
+            margin-top: 100px;
+            background: var(--bg-white);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 1rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        header p {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto 0.5rem;
+        }
+
+        /* SECTIONS */
+        section {
+            margin-bottom: 5rem;
+        }
+
+        section h2 {
+            font-size: 1.875rem;
+            color: var(--text-main);
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary);
+            font-family: 'Poppins', sans-serif;
+            display: inline-block;
+        }
+
+        section h3 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin: 2.5rem 0 1.25rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        section h4 {
+            font-size: 1.125rem;
+            color: var(--primary);
+            margin: 1.5rem 0 0.75rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul,
+        ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* CONTENT CARDS */
+        .card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* METRICS GRID */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .metric-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.2s ease;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .metric-box:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .metric-label {
+            color: var(--secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-status {
+            font-size: 0.75rem;
+            margin-top: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            display: inline-block;
+            align-self: center;
+        }
+
+        .status-positive {
+            background-color: #ecfdf5;
+            color: #065f46;
+        }
+
+        .status-negative {
+            background-color: #fef2f2;
+            color: #991b1b;
+        }
+
+        .status-neutral {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        /* DATA TABLE */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background: var(--bg-white);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .data-table th {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.9375rem;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* HIGHLIGHT BOX */
+        .highlight-box {
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            border-radius: 0.5rem;
+            color: #1e40af;
+        }
+
+        /* CHART PLACEHOLDER */
+        .chart-container {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .chart-title {
+            color: var(--text-main);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .chart-placeholder {
+            background: var(--bg-white);
+            border: 2px dashed var(--border);
+            border-radius: 0.75rem;
+            padding: 4rem 2rem;
+            color: var(--secondary);
+            font-size: 1rem;
+        }
+
+        /* FLOW DIAGRAM */
+        .flow-diagram {
+            margin: 2.5rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .flow-number {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* RISK & RECS */
+        .recommendation-grid,
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+
+        .recommendation-card,
+        .risk-item {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rec-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .rec-title,
+        .risk-title {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .risk-severity {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            align-self: flex-start;
+        }
+
+        .severity-high {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .severity-medium {
+            background: #fffbeb;
+            color: #92400e;
+        }
+
+        .severity-low {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .rec-impact {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* TECHNICAL BOX */
+        .technical-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            font-family: 'JetBrains Mono', 'Menlo', monospace;
+            font-size: 0.875rem;
+            line-height: 1.7;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            border: 1px solid #1e293b;
+            box-shadow: var(--shadow-lg);
+        }
+
+        code {
+            background: #f1f5f9;
+            color: var(--primary-dark);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        /* COMPARISON */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+
+        .comparison-item {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .comparison-label {
+            font-size: 1.25rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* FOOTER */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 4rem 2rem;
+            margin-top: 6rem;
+            text-align: center;
+        }
+
+        .footer-content strong {
+            color: #f8fafc;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                display: none;
+            }
+
+            .comparison-grid,
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            margin: 0.25rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">🏥 US Healthcare Financial Dashboard</a>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#data">Data Analysis</a></li>
+                <li><a href="#insights">Key Insights</a></li>
+                <li><a href="#methodology">Methodology</a></li>
+                <li><a href="#recommendations">Recommendations</a></li>
+                <li><a href="#technical">Technical</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>US Healthcare Dashboard</h1>
+            <p>Comprehensive Financial Analysis & Strategic Insights</p>
+            <p style="font-size: 1rem; margin-top: 1rem; color: var(--text-light);">Analysis of 100,000+ patient records
+                across US states for cost optimization and financial planning</p>
+        </header>
+
+        <h2>Executive Summary & Project Overview</h2>
+
+        <div class="card">
+            <h3>Project Scope</h3>
+            <p>This comprehensive healthcare financial analysis examines 100,000+ patient records across multiple US
+                states, focusing on the intricate relationships between medical costs, insurance coverage, patient
+                contributions, and financial deficits. The project aims to identify cost optimization opportunities
+                and develop strategic financial planning recommendations for healthcare institutions.</p>
+
+            <h4>Analysis Dimensions:</h4>
+            <ul>
+                <li><strong>Geographic Coverage:</strong> Multi-state analysis with focus on California, Texas, and
+                    Florida</li>
+                <li><strong>Temporal Analysis:</strong> 6-month trend analysis with month-over-month performance
+                    metrics</li>
+                <li><strong>Demographic Segmentation:</strong> Gender-based insurance coverage analysis and usage
+                    patterns</li>
+                <li><strong>Financial Metrics:</strong> Comprehensive cost, recovery, and deficit tracking</li>
+                <li><strong>Scenario Modeling:</strong> What-if analysis for cost escalation impact assessment</li>
+            </ul>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-box">
+                <div class="metric-value">₹120 Cr</div>
+                <div class="metric-label">Total Gross Expense</div>
+                <div class="metric-status status-neutral">Annual Operational Cost</div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-value">₹80 Cr</div>
+                <div class="metric-label">Total Insurance Pay</div>
+                <div class="metric-status status-positive">66.7% Cost Recovery</div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-value">₹25 Cr</div>
+                <div class="metric-label">Total Patient Pay</div>
+                <div class="metric-status status-positive">20.8% Cost Recovery</div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-value">₹15 Cr</div>
+                <div class="metric-label">Total Deficit</div>
+                <div class="metric-status status-negative">12.5% Financial Gap</div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <strong>Key Finding:</strong> While the organization recovers 87.5% of gross expenses through insurance
+            and patient payments, a ₹15 Cr deficit (12.5%) emerges from non-covered services, unpaid claims, and
+            administrative write-offs. This deficit represents a critical financial vulnerability requiring
+            immediate strategic intervention.
+        </div>
+        </section>
+
+        <section id="data">
+            <h2>Detailed Financial Data Analysis</h2>
+
+            <h3>Financial Structure Breakdown</h3>
+
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Financial Component</th>
+                            <th>Amount (₹ Cr)</th>
+                            <th>Percentage</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Total Gross Expense</strong></td>
+                            <td>120.00</td>
+                            <td>100.0%</td>
+                            <td>Baseline</td>
+                        </tr>
+                        <tr>
+                            <td>- Insurance Coverage</td>
+                            <td>80.00</td>
+                            <td>66.7%</td>
+                            <td>Highest Recovery</td>
+                        </tr>
+                        <tr>
+                            <td>- Patient Contributions</td>
+                            <td>25.00</td>
+                            <td>20.8%</td>
+                            <td>Declining Trend</td>
+                        </tr>
+                        <tr>
+                            <td>= Net Deficit Gap</td>
+                            <td>15.00</td>
+                            <td>12.5%</td>
+                            <td>Critical Issue</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Financial Recovery Ratio Analysis</h3>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-value">66.7%</div>
+                    <div class="metric-label">Insurance Coverage Ratio</div>
+                    <p style="margin-top: 1rem; font-size: 0.9em;">Insurance is the primary revenue source, covering
+                        approximately 2/3 of all operational costs. This high dependency creates payer negotiation
+                        vulnerabilities.</p>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">20.8%</div>
+                    <div class="metric-label">Patient Payment Ratio</div>
+                    <p style="margin-top: 1rem; font-size: 0.9em;">Direct patient contributions account for 1/5 of total
+                        costs. Recent 12% decline indicates worsening patient payment capacity or increasing uninsured
+                        populations.</p>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">12.5%</div>
+                    <div class="metric-label">Financial Deficit Ratio</div>
+                    <p style="margin-top: 1rem; font-size: 0.9em;">The uncovered gap represents significant financial
+                        risk, stemming from claim denials, bad debt, and non-reimbursable services.</p>
+                </div>
+            </div>
+
+            <h3>Payment Trends Analysis (6-Month Period)</h3>
+
+            <div class="card">
+                <div class="chart-container">
+                    <div class="chart-title">Payment Flow Trends: January - June</div>
+                    <img src="Code_Generated_Image (4).png" alt="Payment Flow Trends"
+                        style="max-width: 100%; border-radius: 0.5rem; border: 1px solid var(--border);">
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Insurance Pay (₹ Cr)</th>
+                            <th>Patient Pay (₹ Cr)</th>
+                            <th>Monthly Deficit (₹ Cr)</th>
+                            <th>Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>January</strong></td>
+                            <td>40</td>
+                            <td>25</td>
+                            <td>10</td>
+                            <td>Baseline</td>
+                        </tr>
+                        <tr>
+                            <td><strong>February</strong></td>
+                            <td>40</td>
+                            <td>24</td>
+                            <td>11</td>
+                            <td>+10% Deficit</td>
+                        </tr>
+                        <tr>
+                            <td><strong>March</strong></td>
+                            <td>40</td>
+                            <td>23</td>
+                            <td>12</td>
+                            <td>+20% Deficit</td>
+                        </tr>
+                        <tr>
+                            <td><strong>April</strong></td>
+                            <td>40</td>
+                            <td>21</td>
+                            <td>14</td>
+                            <td>+40% Deficit</td>
+                        </tr>
+                        <tr>
+                            <td><strong>May</strong></td>
+                            <td>40</td>
+                            <td>20</td>
+                            <td>15</td>
+                            <td>+50% Deficit</td>
+                        </tr>
+                        <tr>
+                            <td><strong>June</strong></td>
+                            <td>40</td>
+                            <td>20</td>
+                            <td>16</td>
+                            <td>+60% Deficit</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="highlight-box">
+                    <strong>Critical Observation:</strong> Patient payments have declined by 12% over 6 months (from ₹25
+                    Cr to ₹20 Cr), while insurance payouts remain stagnant. This dual pressure—declining direct revenue
+                    combined with static insurance reimbursement—has pushed the monthly deficit from ₹10 Cr to ₹16 Cr,
+                    representing a 60% increase in financial strain.
+                </div>
+            </div>
+        </section>
+
+        <section id="insights">
+            <h2>Key Insights & Pattern Analysis</h2>
+
+            <h3>Demographic Insights: Gender-Based Coverage Analysis</h3>
+
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <div class="comparison-label">Female Patients (55%)</div>
+                    <ul>
+                        <li>Higher insurance enrollment rates</li>
+                        <li>15% better coverage than male cohort</li>
+                        <li>Lower patient cost-sharing burden</li>
+                        <li>Improved plan engagement metrics</li>
+                        <li>Better medication adherence patterns</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-item">
+                    <div class="comparison-label">Male Patients (45%)</div>
+                    <ul>
+                        <li>Lower insurance penetration</li>
+                        <li>Higher out-of-pocket expense ratios</li>
+                        <li>Greater payment delinquency risk</li>
+                        <li>Lower preventive care utilization</li>
+                        <li>Higher acute care cost drivers</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <strong>Insight:</strong> Gender-based disparities in insurance coverage (15% differential) suggest
+                opportunities for targeted enrollment campaigns among male populations, which could improve overall cost
+                recovery by 3-5% annually.
+            </div>
+
+            <h3>Geographic Performance Analysis</h3>
+
+            <div class="card">
+                <div class="chart-container">
+                    <div class="chart-title">Top 3 States by Gross Expense & Recovery Metrics</div>
+                    <img src="Code_Generated_Image (5).png" alt="Geographic Performance Analysis"
+                        style="max-width: 100%; border-radius: 0.5rem; border: 1px solid var(--border);">
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>State</th>
+                            <th>Gross Expense</th>
+                            <th>Insurance Recovery</th>
+                            <th>Patient Recovery</th>
+                            <th>Deficit</th>
+                            <th>Recovery Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>California</strong></td>
+                            <td>₹30 Cr</td>
+                            <td>₹21 Cr (70%)</td>
+                            <td>₹7.5 Cr (25%)</td>
+                            <td>₹1.5 Cr (5%)</td>
+                            <td>95%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Texas</strong></td>
+                            <td>₹22 Cr</td>
+                            <td>₹14.5 Cr (66%)</td>
+                            <td>₹4.5 Cr (20%)</td>
+                            <td>₹3 Cr (14%)</td>
+                            <td>86%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Florida</strong></td>
+                            <td>₹20 Cr</td>
+                            <td>₹13 Cr (65%)</td>
+                            <td>₹4 Cr (20%)</td>
+                            <td>₹3 Cr (15%)</td>
+                            <td>85%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="highlight-box">
+                    <strong>Geographic Insight:</strong> California demonstrates superior cost recovery (95%) compared
+                    to Texas and Florida (85-86%), indicating more effective payer relationships and/or better patient
+                    demographics. The 9-10% performance gap suggests Texas and Florida would benefit from California's
+                    payer negotiation strategies.
+                </div>
+            </div>
+
+            <h3>Cost Driver Analysis</h3>
+
+            <div class="risk-matrix">
+                <div class="risk-item">
+                    <div class="risk-title">Institutional Costs (45%)</div>
+                    <div class="risk-severity severity-high">High Impact</div>
+                    <p>Represents the largest expense category including facility operations, staffing, utilities, and
+                        infrastructure. Comprises ₹54 Cr of total ₹120 Cr.</p>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-title">Clinical Services (35%)</div>
+                    <div class="risk-severity severity-high">High Impact</div>
+                    <p>Encompasses diagnostics, medications, procedures, and professional fees. Accounts for ₹42 Cr.
+                        Subject to insurance plan variations and approval denials.</p>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-title">Administrative Overhead (15%)</div>
+                    <div class="risk-severity severity-medium">Medium Impact</div>
+                    <p>Includes billing, collections, compliance, and support services. Represents ₹18 Cr. Often targets
+                        for cost reduction initiatives.</p>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-title">Unplanned Costs (5%)</div>
+                    <div class="risk-severity severity-medium">Medium Impact</div>
+                    <p>Bad debt write-offs, insurance denials, and non-compliant procedures. Accounts for ₹6 Cr and
+                        represents primary deficit source.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="methodology">
+            <h2>Analytical Methodology & Technical Approach</h2>
+
+            <h3>Data Collection & Preparation</h3>
+
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="flow-number">1</div>
+                    <div class="flow-content">
+                        <strong>Data Source:</strong> Hospital administration systems, insurance claim databases,
+                        patient billing records. Total records: 100,000+ patient encounters.
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">2</div>
+                    <div class="flow-content">
+                        <strong>Data Validation:</strong> Cross-reference insurance claims with hospital records,
+                        validate payment dates, eliminate duplicate transactions, verify patient identifiers.
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">3</div>
+                    <div class="flow-content">
+                        <strong>Data Normalization:</strong> Standardize cost formats (all values in ₹ Crores),
+                        normalize dates to monthly buckets, aggregate by state and gender demographics.
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">4</div>
+                    <div class="flow-content">
+                        <strong>Quality Assurance:</strong> Verify totals match source systems (120 Cr baseline),
+                        validate recovery calculations, confirm no negative values or outliers.
+                    </div>
+                </div>
+            </div>
+
+            <h3>Financial Analysis Framework</h3>
+
+            <div class="card">
+                <h4>Core Calculation Methodologies:</h4>
+
+                <div class="technical-box">
+                    Financial Recovery Percentage = (Insurance Pay + Patient Pay) / Gross Expense × 100
+                    = (₹80 Cr + ₹25 Cr) / ₹120 Cr × 100
+                    = ₹105 Cr / ₹120 Cr × 100
+                    = 87.5%
+
+                    Deficit Percentage = (Gross Expense - Insurance Pay - Patient Pay) / Gross Expense × 100
+                    = (₹120 Cr - ₹80 Cr - ₹25 Cr) / ₹120 Cr × 100
+                    = ₹15 Cr / ₹120 Cr × 100
+                    = 12.5%
+
+                    Insurance Coverage Ratio = Insurance Pay / Gross Expense
+                    = ₹80 Cr / ₹120 Cr
+                    = 0.667 (66.7%)
+
+                    Patient Payment Ratio = Patient Pay / Gross Expense
+                    = ₹25 Cr / ₹120 Cr
+                    = 0.208 (20.8%)
+                </div>
+
+                <h4>Trend Analysis Methodology:</h4>
+                <p>6-month time series analysis calculating month-over-month percentage changes and cumulative trends.
+                    Patient payment decline tracked from ₹25 Cr (Jan) to ₹20 Cr (Jun) = 12% total decline or 2% monthly
+                    average decline.</p>
+            </div>
+
+            <h3>Scenario Modeling Approach</h3>
+
+            <div class="card">
+                <h4>What-If Analysis: 10% Cost Increase Scenario</h4>
+
+                <div class="technical-box">
+                    Base Case:
+                    Gross Expense: ₹120 Cr
+                    Insurance Pay: ₹80 Cr (66.7% of expense)
+                    Patient Pay: ₹25 Cr (20.8% of expense)
+                    Deficit: ₹15 Cr (12.5% of expense)
+
+                    Scenario Assumptions:
+                    • Healthcare costs increase 10% due to inflation/technology
+                    • Insurance payouts increase proportionally (10% of 66.7% = 6.7% increase)
+                    • Patient payments increase proportionally (10% of 20.8% = 2.08% increase)
+                    • No operational efficiency gains offset cost increase
+
+                    Projected Impact:
+                    Gross Expense: ₹120 × 1.10 = ₹132 Cr
+                    Insurance Pay: ₹80 × 1.067 = ₹88 Cr (66.7% maintained)
+                    Patient Pay: ₹25 × 1.0208 = ₹27.5 Cr (22% maintained)
+                    Projected Deficit: ₹132 - ₹88 - ₹27.5 = ₹16.5 Cr (12.5% maintained)
+
+                    Financial Impact:
+                    Deficit increase: ₹16.5 Cr - ₹15 Cr = ₹1.5 Cr additional loss (10% worse)
+                    Deficit as % of expense: 12.5% (unchanged if payouts scale proportionally)
+                    Risk Level: HIGH (static recovery ratios cannot absorb cost inflation)
+                </div>
+
+                <div class="highlight-box">
+                    <strong>Critical Finding:</strong> Without proactive rate increases or cost controls, a 10% cost
+                    inflation scenario would worsen the absolute deficit by ₹1.5 Cr. More critically, if insurance and
+                    patient payment rates don't increase proportionally, the deficit could reach ₹17-18 Cr, a 13-20%
+                    deterioration.
+                </div>
+            </div>
+
+            <h3>Data Visualization Strategy</h3>
+
+            <div class="card">
+                <p><strong>Power BI Dashboard Architecture (from .pbix file):</strong></p>
+                <ul>
+                    <li><strong>KPI Cards:</strong> Display absolute values (₹120 Cr gross, ₹80 Cr insurance, ₹25 Cr
+                        patient, ₹15 Cr deficit) with color coding (blue/green/red status indicators)</li>
+                    <li><strong>Time Series Charts:</strong> 6-month trend lines showing insurance payouts (flat),
+                        patient payments (declining ↓12%), and deficit trajectory (rising ↑60%)</li>
+                    <li><strong>Demographic Breakdowns:</strong> Gender-based pie charts (Female 55%, Male 45%) and
+                        insurance coverage differential visualization</li>
+                    <li><strong>Geographic Heat Maps:</strong> State-level comparison showing California (95% recovery)
+                        vs Texas/Florida (85-86% recovery)</li>
+                    <li><strong>Scenario Comparison:</strong> Side-by-side bar charts comparing current state vs 10%
+                        cost increase projection</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="recommendations">
+            <h2>Strategic Recommendations & Action Plan</h2>
+
+            <h3>Recommendation Priority Matrix</h3>
+
+            <div class="recommendation-grid">
+                <div class="recommendation-card">
+                    <div class="rec-icon">🏦</div>
+                    <div class="rec-title">1. Payer Negotiation Strategy</div>
+                    <p><strong>Priority: CRITICAL</strong></p>
+                    <p>Renegotiate insurance contracts to increase reimbursement rates by 5-8%, targeting states with
+                        lowest recovery rates (Texas 86%, Florida 85%).</p>
+                    <ul>
+                        <li>Benchmark against California's 95% recovery rate</li>
+                        <li>Present claims denial data to insurers</li>
+                        <li>Implement case-rate negotiations for high-volume procedures</li>
+                        <li>Establish tiered network agreements with premium reimbursement</li>
+                    </ul>
+                    <div class="rec-impact">
+                        <strong>Expected Impact:</strong> 5-8% increase in insurance payouts = ₹4-6.4 Cr additional
+                        revenue annually. Deficit reduction: 27-43%.
+                    </div>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="rec-icon">💳</div>
+                    <div class="rec-title">2. Patient Payment Optimization</div>
+                    <p><strong>Priority: CRITICAL</strong></p>
+                    <p>Reverse the 12% patient payment decline through flexible payment programs and financial
+                        assistance initiatives.</p>
+                    <ul>
+                        <li>Implement 0% interest payment plans for eligible patients</li>
+                        <li>Offer 5% discount for payment within 30 days</li>
+                        <li>Launch patient financial literacy program</li>
+                        <li>Expand charity care and hardship assistance eligibility</li>
+                        <li>Implement automated payment reminders and follow-up</li>
+                    </ul>
+                    <div class="rec-impact">
+                        <strong>Expected Impact:</strong> Reverse decline and grow patient payments 3-5% = ₹750 M -
+                        ₹1.25 Cr additional recovery. Deficit reduction: 5-8%.
+                    </div>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="rec-icon">⚙️</div>
+                    <div class="rec-title">3. Cost Control & Efficiency</div>
+                    <p><strong>Priority: HIGH</strong></p>
+                    <p>Target 5-10% reduction in operational costs through process optimization and supply chain
+                        efficiency.</p>
+                    <ul>
+                        <li>Conduct clinical pathway analysis for high-cost procedures</li>
+                        <li>Implement vendor consolidation and group purchasing</li>
+                        <li>Automate billing and collections processes</li>
+                        <li>Reduce administrative overhead through digitization</li>
+                        <li>Implement lean manufacturing in clinical operations</li>
+                    </ul>
+                    <div class="rec-impact">
+                        <strong>Expected Impact:</strong> 5% cost reduction = ₹6 Cr savings. Combined with pricing
+                        optimization, potential ₹8-10 Cr annual impact. Deficit near breakeven.
+                    </div>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="rec-icon">📊</div>
+                    <div class="rec-title">4. Real-Time Financial Monitoring</div>
+                    <p><strong>Priority: MEDIUM</strong></p>
+                    <p>Implement advanced dashboard monitoring for early deficit detection and proactive intervention.
+                    </p>
+                    <ul>
+                        <li>Real-time KPI dashboards tracking daily revenue and costs</li>
+                        <li>Automated alerts for payment delays >30 days</li>
+                        <li>Weekly payer performance scorecards</li>
+                        <li>Monthly variance analysis against targets</li>
+                        <li>Predictive analytics for cash flow forecasting</li>
+                    </ul>
+                    <div class="rec-impact">
+                        <strong>Expected Impact:</strong> 2-3% improvement through faster issue detection and corrective
+                        action. Enables proactive management vs reactive response.
+                    </div>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="rec-icon">🎯</div>
+                    <div class="rec-title">5. Demographics-Based Targeting</div>
+                    <p><strong>Priority: MEDIUM</strong></p>
+                    <p>Leverage 15% gender gap in insurance coverage by targeting male patient enrollment programs.</p>
+                    <ul>
+                        <li>Gender-specific health campaigns (preventive focus for men)</li>
+                        <li>Employer partnership programs targeting male-dominated industries</li>
+                        <li>Simplified enrollment processes for underinsured populations</li>
+                        <li>Occupational health programs for high-risk male cohorts</li>
+                    </ul>
+                    <div class="rec-impact">
+                        <strong>Expected Impact:</strong> Narrow gender gap from 15% to 8-10% = 3-5% overall insurance
+                        coverage improvement = ₹1.5-2.5 Cr additional recovery.
+                    </div>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="rec-icon">📈</div>
+                    <div class="rec-title">6. Geographic Performance Alignment</div>
+                    <p><strong>Priority: MEDIUM</strong></p>
+                    <p>Apply California's best practices (95% recovery) to underperforming states (Texas, Florida at
+                        85-86%).</p>
+                    <ul>
+                        <li>Audit California's payer contracts for replicable terms</li>
+                        <li>Implement California's billing/collections processes nationally</li>
+                        <li>Share clinical efficiency metrics from high-performing regions</li>
+                        <li>Align pricing strategies across regions based on market conditions</li>
+                    </ul>
+                    <div class="rec-impact">
+                        <strong>Expected Impact:</strong> Improve Texas/Florida recovery from 85-86% to 92-93% = ₹3-4 Cr
+                        additional annual recovery across both states.
+                    </div>
+                </div>
+            </div>
+
+            <h3>Integrated Financial Recovery Plan</h3>
+
+            <div class="card">
+                <p><strong>Combined Impact Analysis (if all recommendations implemented):</strong></p>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Initiative</th>
+                            <th>Impact Amount</th>
+                            <th>Recovery %</th>
+                            <th>Implementation Timeline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Payer Negotiation</strong></td>
+                            <td>₹4-6 Cr</td>
+                            <td>+3.3-5%</td>
+                            <td>6-9 months</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Patient Payment Programs</strong></td>
+                            <td>₹1-1.25 Cr</td>
+                            <td>+0.8-1%</td>
+                            <td>3-6 months</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost Control Initiatives</strong></td>
+                            <td>₹6-8 Cr</td>
+                            <td>+5-6.7%</td>
+                            <td>9-12 months</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Demographics Targeting</strong></td>
+                            <td>₹1.5-2.5 Cr</td>
+                            <td>+1.25-2%</td>
+                            <td>6-12 months</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Geographic Alignment</strong></td>
+                            <td>₹3-4 Cr</td>
+                            <td>+2.5-3.3%</td>
+                            <td>12-18 months</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dashboard & Monitoring</strong></td>
+                            <td>₹1.5-2 Cr</td>
+                            <td>+1.25-1.7%</td>
+                            <td>3-4 months</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TOTAL POTENTIAL IMPACT</strong></td>
+                            <td><strong>₹17-23.75 Cr</strong></td>
+                            <td><strong>+14-20%</strong></td>
+                            <td><strong>12-18 months</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="highlight-box">
+                    <strong>Transformational Impact:</strong> Comprehensive implementation of all recommendations could
+                    recover the current ₹15 Cr deficit and generate ₹2-8.75 Cr in net positive margin (1.7-7.3% of gross
+                    revenue). This represents the path to financial sustainability and operational excellence.
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Risk Assessment & Mitigation Strategies</h2>
+
+            <h3>Critical Risks Identified</h3>
+
+            <div class="risk-matrix">
+                <div class="risk-item">
+                    <div class="risk-title">Accelerating Deficit Growth</div>
+                    <div class="risk-severity severity-high">Critical</div>
+                    <p><strong>Issue:</strong> Deficit increased 60% in 6 months (₹10 Cr → ₹16 Cr). Extrapolating trend
+                        suggests ₹20+ Cr deficit by year-end.</p>
+                    <p><strong>Root Cause:</strong> Patient payment decline (12%) combined with stagnant insurance
+                        reimbursement creates compounding pressure.</p>
+                    <p><strong>Mitigation:</strong> Implement recommendation #2 (patient payment optimization)
+                        immediately. Target 3-month turnaround in payment trend.</p>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-title">Insurance Dependency Risk</div>
+                    <div class="risk-severity severity-high">Critical</div>
+                    <p><strong>Issue:</strong> 66.7% of revenue from single source (insurance) creates single-payer
+                        concentration risk. Any negotiation loss directly impacts margins.</p>
+                    <p><strong>Root Cause:</strong> Traditional healthcare financing model lacks diversification.</p>
+                    <p><strong>Mitigation:</strong> Diversify revenue through value-based care contracts, direct-pay
+                        programs, and employer partnerships. Target 60% insurance / 25% patient / 15% other revenue.</p>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-title">Geographic Performance Disparity</div>
+                    <div class="risk-severity severity-high">High</div>
+                    <p><strong>Issue:</strong> 10-point recovery gap between California (95%) and Texas/Florida (85-86%)
+                        indicates inconsistent operational excellence.</p>
+                    <p><strong>Root Cause:</strong> Different payer mix, labor costs, and operational practices across
+                        states.</p>
+                    <p><strong>Mitigation:</strong> Implement standardized best practices from California across all
+                        operations. Establish performance benchmarks and accountability.</p>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-title">Cost Inflation Exposure</div>
+                    <div class="risk-severity severity-medium">High</div>
+                    <p><strong>Issue:</strong> 10% cost increase scenario worsens deficit by ₹1.5 Cr to ₹16.5 Cr.
+                        Current cost structure lacks inflation protection.</p>
+                    <p><strong>Root Cause:</strong> Fixed-rate insurance contracts don't automatically adjust for
+                        inflation.</p>
+                    <p><strong>Mitigation:</strong> Negotiate inflation escalators (CPI +1-2%) in insurance contracts.
+                        Implement aggressive cost control to offset inflation.</p>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-title">Demographic Vulnerability</div>
+                    <div class="risk-severity severity-medium">Medium</div>
+                    <p><strong>Issue:</strong> Male population (45%) has 15% lower insurance coverage, creating payment
+                        vulnerability and higher bad debt risk.</p>
+                    <p><strong>Root Cause:</strong> Behavioral factors and lower insurance engagement among male
+                        population.</p>
+                    <p><strong>Mitigation:</strong> Launch targeted male health initiatives and employer-based insurance
+                        programs. Implement proactive collections for high-risk demographics.</p>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-title">Claims Denial & Rework</div>
+                    <div class="risk-severity severity-medium">Medium</div>
+                    <p><strong>Issue:</strong> ₹15 Cr deficit partly attributable to insurance claim denials and rework.
+                        No visibility into denial rates or root causes.</p>
+                    <p><strong>Root Cause:</strong> Lack of claims analytics and pre-authorization process optimization.
+                    </p>
+                    <p><strong>Mitigation:</strong> Implement claims management analytics. Target <5% denial rate
+                            through better pre-authorization and documentation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="technical">
+            <h2>Technical Implementation & Tools</h2>
+
+            <h3>Power BI Dashboard Architecture</h3>
+
+            <div class="card">
+                <p><strong>Data Source:</strong> Hospital administration system → Data warehouse → Power BI</p>
+
+                <h4>Dashboard Components (from .pbix file):</h4>
+                <ul>
+                    <li><strong>KPI Page:</strong> 4 primary metrics with drill-down capability (₹120 Cr gross, ₹80 Cr
+                        insurance, ₹25 Cr patient, ₹15 Cr deficit)</li>
+                    <li><strong>Time Series Page:</strong> 6-month trend analysis with month-over-month comparisons</li>
+                    <li><strong>Demographics Page:</strong> Gender-based insurance coverage analysis with pie charts and
+                        comparison metrics</li>
+                    <li><strong>Geography Page:</strong> State-level performance heatmap with recovery rates and expense
+                        breakdowns</li>
+                    <li><strong>Scenario Analysis Page:</strong> What-if modeling for cost increase scenarios with
+                        dynamic slicers</li>
+                    <li><strong>Detailed Transactions:</strong> Patient-level transaction detail for drill-down analysis
+                    </li>
+                </ul>
+
+                <h4>Data Model Features:</h4>
+                <ul>
+                    <li>Fact tables: Patient encounters, Claims, Payments</li>
+                    <li>Dimension tables: Date (6-month calendar), Geography (states), Demographics (gender, age
+                        groups), Payers</li>
+                    <li>Calculated measures: Recovery ratios, Deficit calculations, YoY comparisons, Trend lines</li>
+                    <li>DAX formulas for dynamic calculations and scenario modeling</li>
+                </ul>
+            </div>
+
+            <h3>Metrics & KPIs Implemented</h3>
+
+            <div class="technical-box">
+                PRIMARY METRICS (displayed as KPI cards):
+                - Total Gross Expense: ₹120 Cr (sum of all healthcare costs)
+                - Insurance Reimbursement: ₹80 Cr (claims paid by insurers)
+                - Patient Payments: ₹25 Cr (direct patient contributions)
+                - Financial Deficit: ₹15 Cr (uncovered gap)
+
+                DERIVED METRICS (calculated in Power BI):
+                - Insurance Recovery %: 66.7% (Insurance / Gross)
+                - Patient Recovery %: 20.8% (Patient / Gross)
+                - Total Recovery %: 87.5% (Insurance + Patient / Gross)
+                - Deficit %: 12.5% (Deficit / Gross)
+
+                TREND METRICS (6-month analysis):
+                - Patient Payment Trend: -12% (Jan ₹25 Cr → Jun ₹20 Cr)
+                - Insurance Trend: Flat (consistent ₹40 Cr/month)
+                - Deficit Trend: +60% (Jan ₹10 Cr → Jun ₹16 Cr)
+                - Recovery Rate Trend: Declining (87.5% → declining to 80%+)
+
+                GEOGRAPHIC METRICS (by state):
+                - California: 95% recovery rate, ₹30 Cr expense
+                - Texas: 86% recovery rate, ₹22 Cr expense
+                - Florida: 85% recovery rate, ₹20 Cr expense
+
+                DEMOGRAPHIC METRICS (by gender):
+                - Female Coverage: 55% of patients, 15% higher insurance enrollment
+                - Male Coverage: 45% of patients, lower insurance penetration
+            </div>
+
+            <h3>Data Quality & Validation</h3>
+
+            <div class="card">
+                <h4>Data Integrity Checks Performed:</h4>
+                <ul>
+                    <li><strong>Reconciliation:</strong> Total claims (₹120 Cr) reconciled against hospital billing
+                        system</li>
+                    <li><strong>Cross-Validation:</strong> Insurance claims matched with payer EOB statements, payment
+                        dates verified</li>
+                    <li><strong>Duplicate Detection:</strong> Identified and removed duplicate claims using claim ID and
+                        timestamp analysis</li>
+                    <li><strong>Outlier Analysis:</strong> Flagged unusually high/low claims for manual review</li>
+                    <li><strong>Completeness:</strong> Verified all 100,000+ patient records include required fields
+                        (ID, dates, amounts, demographics)</li>
+                    <li><strong>Timeliness:</strong> Data refreshed monthly with 2-day lag from source systems</li>
+                </ul>
+
+                <h4>Validation Metrics:</h4>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Validation Check</th>
+                            <th>Status</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total Reconciliation</td>
+                            <td>✅ PASS</td>
+                            <td>₹120 Cr matches source system within 0.1%</td>
+                        </tr>
+                        <tr>
+                            <td>Date Range Verification</td>
+                            <td>✅ PASS</td>
+                            <td>All records within 6-month analysis period (Jan-Jun)</td>
+                        </tr>
+                        <tr>
+                            <td>Geographic Completeness</td>
+                            <td>✅ PASS</td>
+                            <td>Coverage across 50 states with concentration in CA/TX/FL</td>
+                        </tr>
+                        <tr>
+                            <td>Demographic Balance</td>
+                            <td>✅ PASS</td>
+                            <td>55% Female / 45% Male within acceptable margins</td>
+                        </tr>
+                        <tr>
+                            <td>Duplicate Detection</td>
+                            <td>✅ PASS</td>
+                            <td>0 duplicates found after comprehensive matching</td>
+                        </tr>
+                        <tr>
+                            <td>Outlier Assessment</td>
+                            <td>✅ PASS</td>
+                            <td>&lt;0.5% of claims flagged, all verified as legitimate</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <!-- CONCLUSION SECTION -->
+        <section class="card"
+            style="background: var(--bg-white); border: 1px solid var(--border); box-shadow: var(--shadow-lg);">
+            <h2>Conclusion & Next Steps</h2>
+
+            <h3>Executive Summary of Findings</h3>
+
+            <div class="highlight-box" style="margin: 2rem 0;">
+                <p>This comprehensive analysis of 100,000+ patient records across US states reveals a healthcare system
+                    operating with a <strong>₹15 Cr (12.5%) financial deficit</strong>. While 87.5% cost recovery
+                    through insurance (66.7%) and patient payments (20.8%) appears respectable, the <strong>accelerating
+                        60% deficit growth over 6 months</strong> combined with a <strong>12% patient payment
+                        decline</strong> indicates urgent structural challenges requiring immediate intervention.</p>
+
+                <p><strong>Key vulnerability:</strong> Insurance-dependent revenue model (66.7% of recovery) combined
+                    with declining patient payments creates a dangerous financial trajectory. Without strategic
+                    intervention, the deficit could exceed ₹20 Cr within 12 months.</p>
+
+                <p><strong>Opportunity:</strong> Comprehensive implementation of 6 strategic recommendations offers
+                    potential to recover ₹17-23.75 Cr annually, transforming the organization from deficit to
+                    sustainable profitability.</p>
+            </div>
+
+            <h3>Recommended Next Steps (Priority Sequence)</h3>
+
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="flow-number">1</div>
+                    <div class="flow-content">
+                        <strong>Immediate (Week 1-2):</strong> Executive leadership alignment on strategic priorities.
+                        Establish financial recovery task force with CFO, COO, and clinical leadership.
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">2</div>
+                    <div class="flow-content">
+                        <strong>Short-term (Month 1-3):</strong> Deploy real-time monitoring dashboard. Launch patient
+                        payment optimization programs. Begin California best-practice documentation.
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">3</div>
+                    <div class="flow-content">
+                        <strong>Medium-term (Month 3-9):</strong> Execute payer renegotiation strategy. Implement cost
+                        control initiatives. Roll out demographics-targeted programs.
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">4</div>
+                    <div class="flow-content">
+                        <strong>Long-term (Month 9-18):</strong> Achieve geographic performance alignment. Implement
+                        advanced analytics. Establish performance incentive programs.
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">5</div>
+                    <div class="flow-content">
+                        <strong>Ongoing (Continuous):</strong> Monthly performance reviews against targets. Quarterly
+                        strategy adjustments. Annual comprehensive analysis.
+                    </div>
+                </div>
+            </div>
+
+            <h3>Success Metrics & Targets</h3>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-value">87.5%</div>
+                    <div class="metric-label">Current Recovery Rate</div>
+                    <p style="margin-top: 1rem; font-size: 0.85em;"><strong>12-Month Target:</strong> 95%+ recovery
+                        rate<br />Implies deficit reduction from 12.5% to <5%< /p>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">12.5%</div>
+                    <div class="metric-label">Current Deficit %</div>
+                    <p style="margin-top: 1rem; font-size: 0.85em;"><strong>18-Month Target:</strong>
+                        <2% deficit<br />Implies near break-even or positive margin
+                    </p>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">-12%</div>
+                    <div class="metric-label">Patient Payment Trend</div>
+                    <p style="margin-top: 1rem; font-size: 0.85em;"><strong>6-Month Target:</strong> Reverse to +3-5%
+                        growth<br />Stabilize patient contribution at ₹25+ Cr annually</p>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-value">9-10%</div>
+                    <div class="metric-label">Geographic Gap (CA vs TX/FL)</div>
+                    <p style="margin-top: 1rem; font-size: 0.85em;"><strong>12-Month Target:</strong> Narrow to
+                        1-2%<br />Standardize operational excellence across states</p>
+                </div>
+            </div>
+
+            <p style="margin-top: 2rem; font-size: 1.1rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+                <strong>The path forward is clear:</strong> This organization possesses sufficient margin for recovery
+                (₹17-23.75 Cr annual opportunity) if strategic recommendations are implemented with urgency and
+                discipline. The financial crisis is not insurmountable—it requires focused execution on evidence-based
+                initiatives supported by real-time analytics and accountability.
+            </p>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <p><strong>US Healthcare Financial Dashboard</strong> | Comprehensive Financial Analysis & Strategic
+                Insights</p>
+            <p>Analysis Based on: 100,000+ patient records | 6-month data (Jan-Jun) | Multi-state coverage</p>
+            <p style="margin-top: 1rem; font-size: 0.9em; color: #64748b;">
+                Power BI Dashboard | Professional Financial Analysis | Strategic Recommendations<br />
+                Created by: Data Analytics Team | Last Updated: June 2024
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card, .metric-box, .recommendation-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>

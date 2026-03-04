@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPER-SAR-Option Trading Bot - Technical Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FFFFFF;
+            --bg-alt: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --border-color: #E5E7EB;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+
+            /* Professional Semantic Color System */
+            --color-primary: #1D4ED8;
+            --color-success: #059669;
+            --color-danger: #DC2626;
+            --color-warning: #D97706;
+            --color-info: #0891B2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
+
+        header {
+            margin-bottom: 60px;
+            text-align: left;
+        }
+
+        header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+            max-width: 800px;
+            font-weight: 400;
+        }
+
+        section {
+            margin-bottom: 60px;
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 24px;
+            letter-spacing: -0.01em;
+        }
+
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background-color: var(--color-primary);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 40px 0 16px 0;
+        }
+
+        h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 24px 0 12px 0;
+        }
+
+        p {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        .card h4 {
+            color: var(--color-primary);
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        .architecture-flow {
+            background-color: var(--bg-alt);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 60px 24px;
+            margin: 40px 0;
+        }
+
+        .pipeline {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+            padding-left: 40px;
+        }
+
+        .pipeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--color-primary);
+            opacity: 0.15;
+        }
+
+        .pipeline-step {
+            position: relative;
+            margin-bottom: 48px;
+        }
+
+        .pipeline-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .pipeline-node {
+            position: absolute;
+            left: -40px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            background-color: var(--bg-color);
+            border: 3px solid var(--color-primary);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .pipeline-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .pipeline-title {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .pipeline-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        ul,
+        ol {
+            margin-left: 20px;
+            margin-bottom: 24px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        li strong {
+            color: var(--text-primary);
+        }
+
+        code {
+            background-color: #F3F4F6;
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: var(--color-danger);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+        }
+
+        .highlight {
+            background-color: #F0F7FF;
+            border-left: 4px solid var(--color-primary);
+            padding: 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+            color: var(--text-secondary);
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .tech-item {
+            background-color: var(--bg-alt);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .tech-item .name {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .tech-item .desc {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 32px 0;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--bg-alt);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #F3F4F6;
+            color: var(--color-info);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 4px 4px 4px 0;
+        }
+
+        .badge-success {
+            background-color: #ECFDF5;
+            color: var(--color-success);
+        }
+
+        .badge-danger {
+            background-color: #FEF2F2;
+            color: var(--color-danger);
+        }
+
+        .badge-warning {
+            background-color: #FFFBEB;
+            color: var(--color-warning);
+        }
+
+        .warning {
+            background-color: #FEF2F2;
+            border-left: 4px solid var(--color-danger);
+            padding: 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+            color: #991B1B;
+        }
+
+        .success {
+            background-color: #ECFDF5;
+            border-left: 4px solid var(--color-success);
+            padding: 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+            color: #065F46;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 60px;
+            padding: 40px 0;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .data-flow-diagram {
+            background-color: #0B1220;
+            border-radius: 12px;
+            padding: 32px;
+            margin: 32px 0;
+            font-family: 'JetBrains Mono', monospace;
+            color: #94A3B8;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        pre {
+            background-color: #0B1220;
+            border-radius: 12px;
+            padding: 32px;
+            color: #94A3B8;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 32px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            header h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>SUPER-SAR Option Trading System</h1>
+            <p>Production-Ready Multi-Threaded Algorithmic Trading System</p>
+        </header>
+
+        <!-- EXECUTIVE SUMMARY -->
+        <section>
+            <h2>Executive Summary</h2>
+            <p>SUPER-SAR-Option is a robust algorithmic trading system designed for professional
+                options trading on the Bombay Stock Exchange (BSE). The platform leverages a decoupled, multi-threaded
+                architecture to deliver high-performance execution latency while maintaining enterprise-level
+                reliability and
+                compliance.</p>
+
+            <div class="highlight">
+                <strong>Key Capabilities:</strong>
+                <ul>
+                    <li>Real-time multi-strike monitoring with automatic ATM selection</li>
+                    <li>Proprietary algorithmic entry/exit signals with real-time validation</li>
+                    <li>Paper trading & live execution with emergency kill-switch protection</li>
+                    <li>Cross-market trend correlation via secure communications infrastructure</li>
+                    <li>Multi-layered risk management and automated position protective protocols</li>
+                    <li>Comprehensive audit logging and P&L tracking</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SYSTEM ARCHITECTURE -->
+        <section>
+            <h2>System Architecture</h2>
+            <p>The SUPER-SAR-Option platform is built on a modular, service-oriented architecture (SOA) that separates
+                concerns across five distinct processing layers:</p>
+
+            <div class="architecture-flow">
+                <div class="pipeline">
+                    <div class="pipeline-step">
+                        <div class="pipeline-node"></div>
+                        <span class="pipeline-label">Level 1</span>
+                        <span class="pipeline-title">Data Layer</span>
+                        <p class="pipeline-desc">WebSocket and REST API integration for real-time market data ingestion.
+                        </p>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node"></div>
+                        <span class="pipeline-label">Level 2</span>
+                        <span class="pipeline-title">Ingestion Layer</span>
+                        <p class="pipeline-desc">Dedicated sync engine for historical data reconciliation and state
+                            management.</p>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node"></div>
+                        <span class="pipeline-label">Level 3</span>
+                        <span class="pipeline-title">Strategy Engine</span>
+                        <p class="pipeline-desc">Technical indicator computation and multi-consensus signal generation.
+                        </p>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node"></div>
+                        <span class="pipeline-label">Level 4</span>
+                        <span class="pipeline-title">Risk Engine</span>
+                        <p class="pipeline-desc">Automated position management, stop-loss logic, and volatility
+                            filtering.</p>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node"></div>
+                        <span class="pipeline-label">Level 5</span>
+                        <span class="pipeline-title">Execution Engine</span>
+                        <p class="pipeline-desc">High-performance order placement and lifecycle management via broker
+                            APIs.</p>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="pipeline-node"></div>
+                        <span class="pipeline-label">Level 6</span>
+                        <span class="pipeline-title">Audit Layer</span>
+                        <p class="pipeline-desc">Structured logging, compliance tracking, and real-time P&L reporting.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Layer 1: Data Layer</h3>
+            <p>The data layer handles all external data ingestion and acts as the primary interface to broker APIs.</p>
+            <ul>
+                <li><strong>FlatTrade REST API:</strong> Licensed broker integration for live market data and order
+                    execution</li>
+                <li><strong>WebSocket Subscription:</strong> Real-time LTP (Last Traded Price) streaming for sub-second
+                    latency</li>
+                <li><strong>Historical Data Retrieval:</strong> 3-day OHLCV candle data for technical analysis
+                    foundation</li>
+                <li><strong>Quote Fetching:</strong> Periodic snapshot polls for VWAP, Ask/Bid prices, and Greeks</li>
+            </ul>
+
+            <h3>Layer 2: Ingestion Layer (Real-Time Syncer)</h3>
+            <p>A dedicated <code>historical_syncer()</code> thread manages continuous data ingestion with intelligent
+                caching and conflict avoidance.</p>
+            <div class="highlight">
+                <strong>Key Responsibilities:</strong>
+                <ul>
+                    <li>Monitors global state for CE/PE token changes</li>
+                    <li>Fetches 3-day historical bars every 30 seconds</li>
+                    <li>Prevents "zero-value overwrites" during API hiccups</li>
+                    <li>Calculates structural support/resistance from price peaks and valleys</li>
+                    <li>Thread-safe state management via reader/writer locks</li>
+                </ul>
+            </div>
+
+            <h3>Layer 3: Strategy Engine</h3>
+            <p>The strategy engine processes live data feeds to identify market opportunities based on proprietary
+                quantitative models.</p>
+
+            <h3>Layer 4: Risk Engine</h3>
+            <p>The risk engine ensures capital preservation by enforcing per-trade and per-session risk limits, managing
+                dynamic stop-loss levels, and validating market volatility conditions before entry.</p>
+
+            <h3>Layer 5: Execution Engine (Order Manager)</h3>
+            <p>The execution engine handles all order lifecycle management with thread-safety and rate-limit protection.
+            </p>
+            <ul>
+                <li><strong>Session API Pooling:</strong> Maintains persistent broker session to avoid redundant logins
+                </li>
+                <li><strong>Order Pyramiding:</strong> Incremental lot scaling (Buy-1 → Buy-2 → Buy-3) on momentum
+                    confirmation</li>
+                <li><strong>Emergency Kill Switch:</strong> Centralized <code>emergency_exit()</code> function cancels
+                    all pending orders and squares off positions in <2 seconds</li>
+                <li><strong>Market Hours Enforcement:</strong> Trades only execute between 9:25 AM – 3:15 PM IST; auto
+                    square-off at 3:20 PM</li>
+            </ul>
+
+            <h3>Layer 6: Audit Layer (Logging & Compliance)</h3>
+            <ul>
+                <li><strong>Structured Logging:</strong> JSON-formatted logs for all trades, signals, and errors</li>
+                <li><strong>P&L Tracking:</strong> Real-time P&L aggregation across all completed trades</li>
+                <li><strong>Trade Journal:</strong> CSV export of all trades with entry/exit rationale</li>
+                <li><strong>System Health Monitoring:</strong> CPU/memory utilization tracking via <code>psutil</code>
+                </li>
+            </ul>
+        </section>
+
+        <!-- TECHNICAL IMPLEMENTATION DETAILS -->
+        <section>
+            <h2>Technical Implementation Details</h2>
+
+            <h3>Core Component Architecture</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>📱 Web Dashboard (app.py)</h4>
+                    <p><strong>Technology:</strong> Flask + Vanilla JS</p>
+                    <p><strong>Responsibilities:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Real-time WebSocket status updates</li>
+                        <li>Paper/Live trading mode toggles</li>
+                        <li>SL1/SL2 dynamic switching</li>
+                        <li>P&L dashboard & trade history</li>
+                        <li>FlatTrade OAuth integration</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>🔄 Engine Core (core/engine.py)</h4>
+                    <p><strong>Technology:</strong> Multi-threaded Python</p>
+                    <p><strong>Threads Deployed:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>historical_syncer() - data refresh loop</li>
+                        <li>trading_engine() - main signal generation</li>
+                        <li>zmq_listener() - trend filter subscription</li>
+                        <li>ThreadPoolExecutor - parallel order execution</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>📊 Order Manager (core/order_manager.py)</h4>
+                    <p><strong>Technology:</strong> RESTful Broker API</p>
+                    <p><strong>Key Methods:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>place_real_order() - POST to broker</li>
+                        <li>emergency_exit() - bulk cancel/square-off</li>
+                        <li>Session management - avoid rate limits</li>
+                        <li>Position reconciliation</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>📈 Indicators (core/indicators.py)</h4>
+                    <p><strong>Technology:</strong> NumPy + Pandas</p>
+                    <p><strong>Calculations:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Heikin-Ashi OHLC normalization</li>
+                        <li>SuperTrend dynamic bands</li>
+                        <li>VWAP accumulation</li>
+                        <li>Parabolic SAR tracking</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>🔐 State Management (core/state.py)</h4>
+                    <p><strong>Technology:</strong> Thread-Safe Global State</p>
+                    <p><strong>Protected Variables:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Token mappings (CE/PE)</li>
+                        <li>Indicator values (ATR, ST, SAR)</li>
+                        <li>Position tracking (qty, avg price)</li>
+                        <li>Trade history (entry/exit timestamps)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>📝 Logging (core/logger.py)</h4>
+                    <p><strong>Technology:</strong> Structured JSON Logging</p>
+                    <p><strong>Outputs:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>logs/app_final.log (main engine)</li>
+                        <li>data/trading_alerts.csv (signal history)</li>
+                        <li>data/paper_trades.csv (trade journal)</li>
+                        <li>DEBUG_LOG (indicator debugging)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Data Flow Diagram</h3>
+            <div class="data-flow-diagram">
+                FlatTrade Broker
+                ↓
+                WebSocket Feed (Real-time LTP)
+                ↓
+                [historical_syncer Thread]
+                Fetches 3-day OHLCV bars
+                Calculates: HA, ATR, ST, SAR, VWAP
+                Detects Structural Support/Resistance
+                ↓
+                [Global State] (Thread-Safe)
+                ce_token, ce_price, ce_atr, ce_st
+                pe_token, pe_price, pe_atr, pe_st
+                ↓
+                [trading_engine Thread]
+                Watch Filter → Entry Signal → Position Tracking
+                ↓
+                [zmq_listener Thread]
+                Receives NIFTY trend from external publisher
+                Validates cross-market confirmation
+                ↓
+                [Execution Engine]
+                place_real_order() / place_paper_order()
+                Update position state
+                ↓
+                [Audit Layer]
+                Log trade + P&L to CSV/JSON
+                Dashboard real-time update
+            </div>
+
+            <h3>Threading Model & Concurrency</h3>
+            <div class="highlight">
+                <strong>Thread Safety Strategy:</strong>
+                <ul>
+                    <li><strong>RwLock Pattern:</strong> Reader/writer locks protect state variables (state.lock)</li>
+                    <li><strong>Immutable Data Sharing:</strong> DataFrame copies exchanged between threads</li>
+                    <li><strong>ThreadPoolExecutor:</strong> Bounded thread pool (max 4 workers) for order placement
+                    </li>
+                    <li><strong>Queue-Based IPC:</strong> thread.Queue for logging and async notifications</li>
+                    <li><strong>ZMQ Pub/Sub:</strong> Loose coupling between market trend publisher and subscriber
+                        threads</li>
+                </ul>
+            </div>
+
+            <h3>Broker Integration (FlatTrade NorenRestApi)</h3>
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Endpoint</th>
+                    <th>Rate Limit</th>
+                </tr>
+                <tr>
+                    <td>Get Historical Data</td>
+                    <td><code>api.get_time_price_series()</code></td>
+                    <td>100 req/min</td>
+                </tr>
+                <tr>
+                    <td>Stream Live Quotes</td>
+                    <td>WebSocket (SSL/TLS)</td>
+                    <td>Unlimited</td>
+                </tr>
+                <tr>
+                    <td>Place Order</td>
+                    <td><code>api.place_order()</code></td>
+                    <td>50 req/min</td>
+                </tr>
+                <tr>
+                    <td>Get Order Status</td>
+                    <td><code>api.order_book()</code></td>
+                    <td>100 req/min</td>
+                </tr>
+                <tr>
+                    <td>Cancel Order</td>
+                    <td><code>api.cancel_order()</code></td>
+                    <td>50 req/min</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- SIGNAL GENERATION LOGIC -->
+        <section>
+            <h2>Signal Generation & Entry Logic</h2>
+
+            <h3>State Machine: Watch → Trade → Exit</h3>
+            <div class="architecture-flow">
+                <div class="flow-box">IDLE STATE</div>
+                <div class="flow-arrow">↓ [ATR > threshold AND ST uptrend AND SAR bullish]</div>
+                <div class="flow-box">WATCH STATE (monitoring for entry)</div>
+                <div class="flow-arrow">↓ [LTP > HA_Close AND HA_Open = HA_Low AND ZMQ signal]</div>
+                <div class="flow-box">ENTRY EXECUTED (position opened)</div>
+                <div class="flow-arrow">↓ [Exit condition met: Target OR SL1 OR SL2]</div>
+                <div class="flow-box">POSITION CLOSED (trade completed)</div>
+                <div class="flow-arrow">↓ [Cooldown period (5 min)]</div>
+                <div class="flow-box">IDLE STATE (return to monitoring)</div>
+            </div>
+
+            <h3>Detailed Entry Criteria (Pseudo-Code)</h3>
+            <pre
+                style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px; padding: 20px; color: #93c5fd; overflow-x: auto; font-size: 0.9em;">
+function check_watch_conditions(strike_data):
+    atr = calculate_atr(strike_data.ha_df)
+    st_val, st_dir = calculate_supertrend(strike_data.ha_df, 10, 1)
+    sar_val, sar_dir = calculate_sar(strike_data.ha_df)
+    
+    condition_1 = atr > MIN_ATR_THRESHOLD  # ₹5-8
+    condition_2 = st_dir == "UP"            # Supertrend bullish
+    condition_3 = sar_dir == "UP"           # SAR bullish
+    condition_4 = ltp >= res_level - 10     # Distance from resistance
+    
+    return condition_1 AND condition_2 AND condition_3 AND condition_4
+
+function check_entry_signal(live_candle, watch_state):
+    if NOT watch_state:
+        return False
+    
+    ltp = live_candle.close
+    ha_close = live_candle.ha_close
+    ha_open = live_candle.ha_open
+    ha_low = live_candle.ha_low
+    
+    condition_1 = ltp > ha_close           # Breakout
+    condition_2 = (ha_open == ha_low)      # Flat-bottomed
+    condition_3 = zmq_signal == BULLISH    # Cross-market validation
+    
+    return condition_1 AND condition_2 AND condition_3
+            </pre>
+
+            <h3>Risk Management: Stop-Loss Dual Mode</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>SL1: ATR-Based (Volatility Stop)</h4>
+                    <p><strong>Formula:</strong> SL = Entry Price - (1.5 × ATR)</p>
+                    <p><strong>Advantages:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Adapts to market volatility</li>
+                        <li>Prevents whipsaws in trending markets</li>
+                        <li>Ensures 1.5:1 risk/reward ratio</li>
+                    </ul>
+                    <p><strong>Use Case:</strong> High volatility (ATR > ₹10)</p>
+                </div>
+
+                <div class="card">
+                    <h4>SL2: Structural (Support-Based)</h4>
+                    <p><strong>Formula:</strong> SL = Low[T-1] (previous candle's low)</p>
+                    <p><strong>Advantages:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Aligned with actual support zones</li>
+                        <li>Reduces false stops from noise</li>
+                        <li>Better for range-bound markets</li>
+                    </ul>
+                    <p><strong>Use Case:</strong> Low volatility (ATR < ₹5)</p>
+                </div>
+            </div>
+
+            <h3>Target Calculation</h3>
+            <div class="highlight">
+                <strong>Dynamic Target Formula:</strong><br />
+                <code>Target Price = Entry Price + (ATR / 3)</code>
+                <br /><br />
+                <strong>Example:</strong>
+                <ul>
+                    <li>Entry: ₹100</li>
+                    <li>ATR: ₹9</li>
+                    <li>Target: ₹100 + (₹9 / 3) = ₹103</li>
+                    <li>SL1: ₹100 - (1.5 × ₹9) = ₹86.50</li>
+                    <li>Risk/Reward: ₹13.50 / ₹3 = 4.5:1</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- TECHNOLOGY STACK -->
+        <section>
+            <h2>Technology Stack</h2>
+
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <div class="name">Python 3.11+</div>
+                    <div class="desc">Core language for strategy engine & threading</div>
+                </div>
+                <div class="tech-item">
+                    <div class="name">Flask 3.1</div>
+                    <div class="desc">Web framework for dashboard & API endpoints</div>
+                </div>
+                <div class="tech-item">
+                    <div class="name">Pandas 2.3</div>
+                    <div class="desc">DataFrame manipulation for OHLCV data</div>
+                </div>
+                <div class="tech-item">
+                    <div class="name">NumPy 2.3</div>
+                    <div class="desc">Numerical computations & vectorized operations</div>
+                </div>
+                <div class="tech-item">
+                    <div class="name">ZMQ 26.2</div>
+                    <div class="desc">Pub/Sub messaging for cross-system trend signals</div>
+                </div>
+                <div class="tech-item">
+                    <div class="name">ta-lib</div>
+                    <div class="desc">Technical analysis library (SuperTrend, SAR)</div>
+                </div>
+                <div class="tech-item">
+                    <div class="name">NorenRestApi</div>
+                    <div class="desc">FlatTrade broker integration (local wheel)</div>
+                </div>
+                <div class="tech-item">
+                    <div class="name">psutil 7.2</div>
+                    <div class="desc">System monitoring (CPU, memory, process health)</div>
+                </div>
+            </div>
+
+            <h3>Dependencies & Deployment</h3>
+            <ul>
+                <li><strong>requirements.txt:</strong> 8 primary dependencies (pip-managed)</li>
+                <li><strong>Local Wheel:</strong> NorenRestApi-0.0.29-py3-none-any.whl (bundled)</li>
+                <li><strong>Port Configuration:</strong> 8080 (Flask server, corporate-compatible)</li>
+                <li><strong>Database:</strong> None (all state in-memory + JSON config files)</li>
+                <li><strong>Persistence:</strong> CSV files for trade journal + JSON for config</li>
+            </ul>
+        </section>
+
+        <!-- PERFORMANCE METRICS -->
+        <section>
+            <h2>Performance Characteristics</h2>
+
+            <h3>Latency Profile</h3>
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Latency (ms)</th>
+                    <th>Bottleneck</th>
+                </tr>
+                <tr>
+                    <td>Indicator Calculation (1 candle)</td>
+                    <td>15-25</td>
+                    <td>NumPy vectorization</td>
+                </tr>
+                <tr>
+                    <td>Signal Detection (full filter)</td>
+                    <td>30-50</td>
+                    <td>State lock acquisition</td>
+                </tr>
+                <tr>
+                    <td>Order Placement (REST)</td>
+                    <td>100-300</td>
+                    <td>Broker API latency</td>
+                </tr>
+                <tr>
+                    <td>Dashboard Update (WebSocket)</td>
+                    <td>5-15</td>
+                    <td>JSON serialization</td>
+                </tr>
+                <tr>
+                    <td>Full Trade Lifecycle</td>
+                    <td>200-500</td>
+                    <td>Broker order confirmation</td>
+                </tr>
+            </table>
+
+            <h3>Resource Utilization (Idle State)</h3>
+            <ul>
+                <li><strong>CPU:</strong> 2-5% (4 active threads)</li>
+                <li><strong>Memory:</strong> 150-200 MB (Pandas DataFrames cached)</li>
+                <li><strong>Network:</strong> ~5 KB/s (periodic API calls)</li>
+                <li><strong>Disk I/O:</strong> Minimal (logging only on events)</li>
+            </ul>
+
+            <h3>Throughput & Scalability</h3>
+            <ul>
+                <li><strong>Simultaneous Strikes Monitored:</strong> 10-20 (CE+PE pairs)</li>
+                <li><strong>Concurrent Orders:</strong> 2-4 (ThreadPoolExecutor bounded)</li>
+                <li><strong>Historical Data Refresh:</strong> 30-second intervals</li>
+                <li><strong>Broker API Rate Limits:</strong> Designed within FlatTrade limits (100 req/min for history)
+                </li>
+            </ul>
+        </section>
+
+
+        <!-- DASHBOARD INTERFACE -->
+        <section>
+            <h2>Live Dashboard Interface</h2>
+            <p>The SUPER-SAR-Option platform provides a real-time web-based trading dashboard with comprehensive market
+                monitoring, indicator visualization, and trade control capabilities. Below are actual screenshots of the
+                operational dashboard in action:</p>
+
+            <h3>Dashboard View 1: Idle State Monitoring</h3>
+            <p>Dashboard shows real-time monitoring of both CE (Call) and PE (Put) options with live indicators,
+                structural support/resistance levels, and P&L tracking.</p>
+            <div style="margin: 20px 0; text-align: center;">
+                <img src="red.png" alt="SUPER-SAR-Option Dashboard - Idle State"
+                    style="max-width: 100%; height: auto; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);">
+            </div>
+            <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">
+                <strong>Features Visible:</strong> Real-time strike monitoring, live LTP streaming, multi-threaded
+                indicator processing, and automated risk management controls including the emergency kill switch.
+            </p>
+
+            <h3>Dashboard View 2: Watch State Active</h3>
+            <p>Dashboard displays an active watch state on PE option (shown in red border) with 172 seconds elapsed
+                since watch activation. Multiple alert conditions are being monitored in real-time.</p>
+            <div style="margin: 20px 0; text-align: center;">
+                <img src="g.png" alt="SUPER-SAR-Option Dashboard - Watch State"
+                    style="max-width: 100%; height: auto; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);">
+            </div>
+            <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">
+                <strong>Features Visible:</strong> Active signal monitoring, automated state transitions, real-time P&L
+                tracking, and position management across multiple option legs.
+            </p>
+
+            <h3>Key Dashboard Components</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>📊 Control Panel (Top)</h4>
+                    <p><strong>Content:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Active Trade Status (IDLE/ENTRY/SCALING/EXIT)</li>
+                        <li>Symbol/Type Display (CE/PE identifier)</li>
+                        <li>Current & Total P&L tracking</li>
+                        <li>Last Exit Status (target/SL hit)</li>
+                        <li>SL Mode Indicator (SL1 vs SL2)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>🎮 Mode Toggles</h4>
+                    <p><strong>Controls:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Trading Mode: PAPER ↔ LIVE</li>
+                        <li>Cooldown: ON / OFF</li>
+                        <li>Token Management: GET TODAY'S TOKEN</li>
+                        <li>Automation: Token Taken Toggle</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>🚨 Emergency Controls</h4>
+                    <p><strong>Critical Functions:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li><span style="color: #ef4444;">KILL SWITCH</span> - Instant square-off</li>
+                        <li>Cooldown Timer Display</li>
+                        <li>Real-time status notifications</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>📈 Market Leg A Panel</h4>
+                    <p><strong>Performance Data:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Live Price Action (high-precision)</li>
+                        <li>Momentum & Trend Oscillators</li>
+                        <li>Volume-Weighted Benchmarks</li>
+                        <li>Current Volatility Coefficients</li>
+                        <li>Structural Resistance Analysis</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>🔴 Market Leg B Panel</h4>
+                    <p><strong>Performance Data:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Live Price Action (high-precision)</li>
+                        <li>Momentum & Trend Oscillators</li>
+                        <li>Volume-Weighted Benchmarks</li>
+                        <li>Current Volatility Coefficients</li>
+                        <li>Structural Resistance Analysis</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>⚡ Signal Status</h4>
+                    <p><strong>Validation Matrix:</strong></p>
+                    <ul style="font-size: 0.9em;">
+                        <li>Volatility Filter [PASS/FAIL]</li>
+                        <li>Trend Agreement [PASS/FAIL]</li>
+                        <li>Momentum Divergence [PASS/FAIL]</li>
+                        <li>Structural Proximity [PASS/FAIL]</li>
+                        <li>Multi-Factor Consensus [PASS/FAIL]</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Dashboard Color Coding</h3>
+            <ul>
+                <li><strong>Green (#22c55e):</strong> Call (CE) options, bullish signals, true conditions</li>
+                <li><strong>Red (#ef4444):</strong> Put (PE) options, bearish signals, false conditions, critical alerts
+                </li>
+                <li><strong>Yellow (#fbbf24):</strong> Nearest resistance level (warning zone)</li>
+                <li><strong>Cyan (#06b6d4):</strong> Information labels and headers</li>
+                <li><strong>White (#ffffff):</strong> Live price display (high emphasis)</li>
+            </ul>
+
+            <h3>Real-Time Data Updates</h3>
+            <ul>
+                <li><strong>Update Frequency:</strong> 500ms WebSocket refresh cycle</li>
+                <li><strong>Live Indicator Calculation:</strong> Recalculated on every new tick</li>
+                <li><strong>Alert Status Badges:</strong> Update as watch conditions change</li>
+                <li><strong>P&L Tracking:</strong> Real-time entry/exit price-based calculation</li>
+                <li><strong>Structural Levels:</strong> Updated every 30 seconds from historical syncer</li>
+            </ul>
+        </section>
+
+        <!-- RISK DISCLOSURE -->
+        <section class="warning">
+            <h2>⚠️ Risk Disclosure & Disclaimer</h2>
+            <ul>
+                <li><strong>Algorithmic Trading Risk:</strong> Automated trading can amplify losses during market
+                    dislocations or exchange outages.</li>
+                <li><strong>Broker API Risk:</strong> Dependency on FlatTrade API uptime. Implement fallback mechanisms
+                    in production.</li>
+                <li><strong>Signal Risk:</strong> Technical indicators are probabilistic, not deterministic. No
+                    indicator has 100% accuracy.</li>
+                <li><strong>Liquidity Risk:</strong> Options market liquidity can deteriorate during volatile sessions.
+                </li>
+                <li><strong>Slippage Risk:</strong> Actual fill prices may differ from quoted prices, especially during
+                    momentum spikes.</li>
+                <li><strong>Regulatory Risk:</strong> Algorithmic trading regulations vary by jurisdiction. Consult
+                    legal counsel.</li>
+            </ul>
+            <p style="margin-top: 20px; color: #fca5a5;"><strong>Recommendation:</strong> Always validate in PAPER MODE
+                before deploying capital. Start with small position sizes and monitor closely.</p>
+        </section>
+
+
+
+        <footer>
+            <p><strong>SUPER-SAR Option Trading System (v9.0)</strong> | Production-Ready Multi-Threaded Algorithmic
+                Trading System</p>
+            <p>© 2024 Trading Development Team | <span style="color: var(--color-danger);">For Educational & Research
+                    Purposes
+                    Only</span></p>
+            <p style="margin-top: 15px; font-size: 0.85em;">
+                ⚠️ Disclaimer: This software is for educational and research purposes only. Algorithmic trading carries
+                significant financial risk.
+                Always test in PAPER MODE before going LIVE. The developers assume no responsibility for financial
+                losses incurred.
+            </p>
+        </footer>
+    </div>
+</body>
+
+</html>
