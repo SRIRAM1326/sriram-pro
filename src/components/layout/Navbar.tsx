@@ -22,7 +22,7 @@ const Navbar = () => {
                         SRIRAM<span className="text-brand-blue">M</span>
                     </Link>
                     <div className="hidden md:flex gap-8 items-center">
-                        {['About', 'Expertise', 'Timeline', 'Projects', 'Research'].map((item) => (
+                        {['About', 'Stack', 'Timeline', 'Projects', 'Research'].map((item) => (
                             <Link
                                 key={item}
                                 href={`#${item.toLowerCase()}`}
@@ -31,8 +31,16 @@ const Navbar = () => {
                                 {item}
                             </Link>
                         ))}
+                        <Link
+                            href="/Sriram_Resume_13.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors"
+                        >
+                            Resume
+                        </Link>
                         <SpotlightButton
-                            href="mailto:sriram132607@gmail.com"
+                            href="mailto:sriram1326.io@gmail.com"
                             className="!px-5 !py-2 !text-[9px] min-w-[100px]"
                         >
                             Contact

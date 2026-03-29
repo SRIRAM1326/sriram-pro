@@ -2,10 +2,12 @@ import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/home/Hero";
 import MockupSection from "@/components/home/MockupSection";
 import About from "@/components/home/About";
-import Expertise from "@/components/home/Expertise";
+import Stack from "@/components/home/Stack";
 import Timeline from "@/components/home/Timeline";
+import SystemsIBuild from "@/components/home/SystemsIBuild";
 import Projects from "@/components/home/Projects";
 import Research from "@/components/home/Research";
+import Certifications from "@/components/home/Certifications";
 import Footer from "@/components/layout/Footer";
 
 export default function Home() {
@@ -15,10 +17,12 @@ export default function Home() {
       <Hero />
       <MockupSection />
       <About />
-      <Expertise />
+      <Stack />
       <Timeline />
+      <SystemsIBuild />
       <Projects />
       <Research />
+      <Certifications />
       <Footer />
     </main>
   );

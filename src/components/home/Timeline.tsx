@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const experiences = [
     {
-        date: "Nov 2023 – Present",
+        date: "Dec 2024 – Present",
         role: "Algorithmic Trading Developer",
         company: "UVFarms",
         description: "Engineered a low-latency, multi-threaded trading framework for live derivatives markets. Achieved 99.9% uptime and sub-100ms latency.",
