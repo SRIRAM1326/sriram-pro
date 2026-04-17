@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -28,6 +29,7 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceGrotesk.variable} antialiased selection:bg-brand-blue/20 selection:text-brand-blue`}
       >
         {children}
+        <Script src="/chatbot-widget.js" strategy="afterInteractive" />
       </body>
     </html>
   );

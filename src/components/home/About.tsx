@@ -35,7 +35,8 @@ const About = () => {
                         </p>
                     </motion.div>
 
-                    <div className="space-y-12">
+                    <div className="space-y-16">
+                        {/* Story Section */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -43,13 +44,13 @@ const About = () => {
                             viewport={{ once: true }}
                             className="space-y-8"
                         >
-                            <div className="space-y-6 text-lg md:text-xl text-black/70 font-inter font-normal leading-relaxed">
+                            <div className="space-y-6 text-lg md:text-xl text-black/70 font-inter font-normal leading-relaxed text-left">
                                 <div className="flex items-center gap-3 mb-6">
                                     <h3 className="text-[10px] font-bold text-black/40 uppercase tracking-[0.3em] font-mono">Story // About</h3>
                                     <div className="flex-1 h-[1px] bg-black/5" />
                                 </div>
                                 <p className="text-black font-semibold text-2xl md:text-3xl leading-tight">
-                                    I build algorithmic trading systems that transform market data into <span className="text-brand-blue">automated decisions.</span>
+                                    I build algorithmic trading systems that transform market data into <span className="text-blue-600">automated decisions.</span>
                                 </p>
                                 <p>
                                     My work focuses on designing <span className="font-bold text-black/90">real-time trading infrastructure</span> that processes live market feeds, calculates quantitative indicators, and executes trades through broker APIs.
@@ -62,84 +63,53 @@ const About = () => {
                                 </p>
                             </div>
                         </motion.div>
+
+                        {/* Why Hire Me Section */}
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.2 }}
                             viewport={{ once: true }}
-                            className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12"
+                            className="pt-16 border-t border-black/5"
                         >
-                            {[
-                                {
-                                    title: "Quantitative Thinking",
-                                    description: "Designing rule-based strategies using statistical analysis.",
-                                    color: "rose"
-                                },
-                                {
-                                    title: "Real-Time Systems",
-                                    description: "Processing live market data using WebSockets and APIs.",
-                                    color: "emerald"
-                                },
-                                {
-                                    title: "Trading Infrastructure",
-                                    description: "Building automated execution engines for algorithmic trading.",
-                                    color: "sky"
-                                }
-                            ].map((box, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className={`p-6 rounded-[22px] border transition-all duration-300 flex flex-col gap-4 group hover:scale-[1.02] shadow-sm hover:shadow-xl
-                                        ${box.color === 'rose' ? 'bg-rose-50/50 border-rose-100 hover:bg-rose-50' : ''}
-                                        ${box.color === 'emerald' ? 'bg-emerald-50/50 border-emerald-100 hover:bg-emerald-50' : ''}
-                                        ${box.color === 'sky' ? 'bg-sky-50/50 border-sky-100 hover:bg-sky-50' : ''}
-                                    `}
-                                >
-                                    {/* macOS dots */}
-                                    <div className="flex gap-1.5">
-                                        <div className={`w-2.5 h-2.5 rounded-full transition-colors ${box.color === 'rose' ? 'bg-rose-400' : 'bg-black/5 group-hover:bg-rose-400'}`} />
-                                        <div className={`w-2.5 h-2.5 rounded-full transition-colors ${box.color === 'emerald' ? 'bg-emerald-400' : 'bg-black/5 group-hover:bg-emerald-400'}`} />
-                                        <div className={`w-2.5 h-2.5 rounded-full transition-colors ${box.color === 'sky' ? 'bg-sky-400' : 'bg-black/5 group-hover:bg-sky-400'}`} />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <h4 className={`font-bold text-[15px] ${
-                                            box.color === 'rose' ? 'text-rose-900' : 
-                                            box.color === 'emerald' ? 'text-emerald-900' : 
-                                            'text-sky-900'
-                                        }`}>
-                                            {box.title}
-                                        </h4>
-                                        <p className={`text-sm leading-relaxed ${
-                                            box.color === 'rose' ? 'text-rose-700/70' : 
-                                            box.color === 'emerald' ? 'text-emerald-700/70' : 
-                                            'text-sky-700/70'
-                                        }`}>
-                                            {box.description}
-                                        </p>
-                                    </div>
-
-                                    <div className="mt-auto pt-2">
-                                        <div className={`w-8 h-[2px] rounded-full group-hover:w-full transition-all duration-500 ease-out ${
-                                            box.color === 'rose' ? 'bg-rose-400/30' : 
-                                            box.color === 'emerald' ? 'bg-emerald-400/30' : 
-                                            'bg-sky-400/30'
-                                        }`} />
-                                    </div>
+                            <div className="flex flex-col gap-10">
+                                <div className="text-left">
+                                    <h3 className="text-[10px] font-bold text-black/40 uppercase tracking-[0.3em] font-mono mb-6">Expertise // Why Hire Me</h3>
+                                    <h4 className="text-3xl md:text-4xl font-bold tracking-tight text-black mb-6">
+                                        Engineering Reliability in <span className="text-black/40">Highly Volatile Markets</span>.
+                                    </h4>
+                                    <p className="text-lg md:text-xl text-black/70 leading-relaxed mb-8">
+                                        I build and deploy production-grade algorithmic trading systems with a strong focus on <span className="text-black font-semibold">performance, reliability, and risk control.</span>
+                                    </p>
                                 </div>
-                            ))}
-                        </motion.div>
 
-                        {/* Small Personal Section */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.4 }}
-                            viewport={{ once: true }}
-                            className="pt-20 text-center border-t border-black/5"
-                        >
-                            <p className="text-black/40 text-sm md:text-base font-medium italic max-w-2xl mx-auto">
-                                "Markets are one of the few places where mathematics, psychology, and technology meet in real time."
-                            </p>
+                                {/* Metrics Grid */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4 py-8 bg-black/[0.02] rounded-[32px] border border-black/[0.04]">
+                                    {[
+                                        { label: "Execution Latency", value: "<100ms" },
+                                        { label: "System Uptime", value: "99.9%" },
+                                        { label: "Automation Boost", value: "+95%" },
+                                        { label: "Active Strategies", value: "06+" }
+                                    ].map((stat, i) => (
+                                        <div key={i} className="flex flex-col items-center justify-center text-center p-4">
+                                            <span className="text-2xl md:text-3xl font-bold tracking-tighter text-black">{stat.value}</span>
+                                            <span className="text-[10px] font-bold text-black/30 uppercase tracking-widest mt-1">{stat.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="space-y-6 text-lg text-black/70 leading-relaxed text-left">
+                                    <p>
+                                        My systems handle real-time market data and automated trade execution across multiple broker APIs, capable of processing high-frequency data streams during peak market conditions without manual overhead.
+                                    </p>
+                                    <p>
+                                        I specialize in designing scalable, low-latency architectures with end-to-end automation, reducing manual intervention by 95% while maintaining strict risk management through structured stop-loss and real-time monitoring systems.
+                                    </p>
+                                    <p className="font-medium text-black/80">
+                                        With hands-on experience in real-time data pipelines, WebSocket integration, and quantitative strategy development, I can contribute immediately to building high-performance trading or data-driven systems.
+                                    </p>
+                                </div>
+                            </div>
                         </motion.div>
                     </div>
                 </div>
