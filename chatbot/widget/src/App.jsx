@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Bot, Paperclip, MoreHorizontal, MessageSquare } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Paperclip, MoreHorizontal, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const API_BASE_URL = '';
@@ -50,14 +50,16 @@ function App() {
       });
 
       const data = await response.json();
-      
+
       const botMessage = {
         id: Date.now() + 1,
         role: 'bot',
         text: data.answer || "I'm sorry, I couldn't process that.",
-        sources: data.sources || []
+        sources: data.sources || [],
+        reasoning: data.reasoning || null,
+        showReasoning: false
       };
-      
+
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       setMessages(prev => [...prev, {
@@ -74,7 +76,7 @@ function App() {
     <div id="chat-widget-root">
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -91,9 +93,31 @@ function App() {
             </div>
 
             <div className="chat-messages">
-              {messages.map((msg) => (
+              {messages.map((msg, idx) => (
                 <div key={msg.id} className={`message ${msg.role}`}>
-                  {msg.text}
+                  <div className="message-text">{msg.text}</div>
+
+                  {msg.reasoning && (
+                    <div className="reasoning-container">
+                      <button
+                        className="reasoning-toggle"
+                        onClick={() => {
+                          const newMessages = [...messages];
+                          newMessages[idx].showReasoning = !newMessages[idx].showReasoning;
+                          setMessages(newMessages);
+                        }}
+                      >
+                        {msg.showReasoning ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                        Internal Reasoning
+                      </button>
+                      {msg.showReasoning && (
+                        <div className="reasoning-content">
+                          {msg.reasoning}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="sources">
                       <strong>Sources:</strong>
@@ -117,10 +141,10 @@ function App() {
             </div>
 
             <div className="chat-input-area">
-              <input 
-                type="text" 
-                className="chat-input" 
-                placeholder="Ask something about this site..." 
+              <input
+                type="text"
+                className="chat-input"
+                placeholder="Ask something about this site..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}

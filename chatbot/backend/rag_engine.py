@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
-from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
+from langchain_nvidia_ai_endpoints import ChatNVIDIA
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate
@@ -10,6 +11,8 @@ from langchain_core.documents import Document
 from operator import itemgetter
 import hashlib
 import logging
+import json
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
 
 load_dotenv()
 
@@ -31,23 +34,35 @@ class RAGEngine:
         # Ensure the directory exists
         os.makedirs(os.path.dirname(self.db_dir), exist_ok=True)
         
-        # Initialize NVIDIA AI Endpoints
-        self.llm = ChatNVIDIA(
-            model="moonshotai/kimi-k2-instruct",
-            api_key=self.api_key,
-            temperature=0.6,
-            top_p=0.9,
-            max_tokens=4096,
-        )
+        # Initialize NVIDIA AI Endpoints - Fallback Chain
+        self.nvidia_api_key = os.getenv("NVIDIA_API_KEY")
+        self.nvidia_model = os.getenv("NVIDIA_MODEL", "meta/llama-3.1-70b-instruct")
+        fallback_str = os.getenv("NVIDIA_FALLBACK_MODELS", "nvidia/llama-3.1-nemotron-70b-instruct,qwen/qwen2.5-72b-instruct,meta/llama-3.1-8b-instruct")
+        self.models_to_try = [self.nvidia_model] + [m.strip() for m in fallback_str.split(",") if m.strip()]
         
-        self.embeddings = NVIDIAEmbeddings(
-            model="nvidia/nv-embedqa-e5-v5", 
-            api_key=self.api_key
+        # We'll initialize the LLM dynamically in each request or keep a cache
+        self.llm_cache = {}
+        
+        # Use HuggingFace embeddings as a free local alternative to NVIDIA
+        self.embeddings = HuggingFaceEmbeddings(
+            model_name="all-MiniLM-L6-v2"
         )
         
         self.vector_store = None
         if os.path.exists(self.db_dir):
             self.load_vector_store()
+
+    def _get_llm(self, model_name):
+        if model_name not in self.llm_cache:
+            logger.info(f"Initializing model: {model_name}")
+            self.llm_cache[model_name] = ChatNVIDIA(
+                model=model_name,
+                api_key=self.nvidia_api_key,
+                temperature=0.7,
+                max_tokens=4096,
+                top_p=0.8
+            )
+        return self.llm_cache[model_name]
 
     def load_vector_store(self):
         logger.info(f"Loading existing vector store for {self.domain}")
@@ -57,6 +72,12 @@ class RAGEngine:
             allow_dangerous_deserialization=True
         )
 
+    @retry(
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        retry=retry_if_exception(lambda e: any(err in str(e).lower() for err in ["502", "503", "504", "bad gateway", "service unavailable"])),
+        before_sleep=lambda retry_state: logger.info(f"Retrying embedding call (attempt {retry_state.attempt_number})...")
+    )
     def build_vector_store(self, pages_content):
         logger.info(f"Building vector store for {self.domain} with {len(pages_content)} pages")
         
@@ -87,7 +108,7 @@ class RAGEngine:
         
         return len(splits)
 
-    def get_answer(self, question):
+    def get_answer(self, question, use_reasoning=True):
         if not self.vector_store:
             return {"answer": "Knowledge base not yet initialized. Please crawl first.", "sources": []}
         
@@ -103,33 +124,58 @@ Question: {question}
 
 Answer:"""
         prompt = ChatPromptTemplate.from_template(template)
+        
+        last_error = None
+        
+        for model_name in self.models_to_try:
+            try:
+                llm = self._get_llm(model_name)
+                
+                # Build the chain using LCEL
+                def format_docs(docs):
+                    return "\n\n".join(doc.page_content for doc in docs)
 
-        # Build the chain using LCEL
-        def format_docs(docs):
-            return "\n\n".join(doc.page_content for doc in docs)
+                chain = (
+                    RunnablePassthrough.assign(context=itemgetter("question") | retriever)
+                    | {
+                        "answer": RunnablePassthrough.assign(context=(lambda x: format_docs(x["context"]))) | prompt | llm,
+                        "context": itemgetter("context")
+                    }
+                )
 
-        rag_chain_from_docs = (
-            RunnablePassthrough.assign(context=(lambda x: format_docs(x["context"])))
-            | prompt
-            | self.llm
-            | StrOutputParser()
-        )
+                logger.info(f"Invoking NVIDIA model ({model_name}) for: {question}")
+                response = chain.invoke({"question": question})
+                logger.info(f"NVIDIA request successful with {model_name}.")
+                
+                # Extract reasoning if available
+                reasoning = None
+                ai_message = response["answer"]
+                
+                if hasattr(ai_message, "additional_kwargs"):
+                    reasoning = ai_message.additional_kwargs.get("reasoning")
+                
+                answer = ai_message.content
+                sources = list(set([doc.metadata.get("source", "Unknown") for doc in response["context"]]))
+                
+                return {
+                    "answer": answer,
+                    "sources": sources,
+                    "reasoning": reasoning
+                }
+                
+            except Exception as e:
+                error_str = str(e).lower()
+                is_transient = any(err in error_str for err in ["502", "503", "504", "bad gateway", "service unavailable", "rate limit", "429", "404", "not found"])
+                
+                if is_transient and model_name != self.models_to_try[-1]:
+                    logger.warning(f"Model {model_name} failed with transient error: {e}. Trying next model in chain...")
+                    last_error = e
+                    continue
+                else:
+                    logger.error(f"RAG Error with model {model_name}: {e}")
+                    return {"answer": f"Error generating answer: {str(e)}", "sources": [], "reasoning": None}
 
-        rag_chain_with_source = RunnablePassthrough.assign(context=itemgetter("question") | retriever) | RunnablePassthrough.assign(answer=rag_chain_from_docs)
-
-        try:
-            response = rag_chain_with_source.invoke({"question": question})
-            
-            answer = response["answer"]
-            sources = list(set([doc.metadata.get("source", "Unknown") for doc in response["context"]]))
-            
-            return {
-                "answer": answer,
-                "sources": sources
-            }
-        except Exception as e:
-            logger.error(f"RAG Error: {e}")
-            return {"answer": f"Error generating answer: {str(e)}", "sources": []}
+        return {"answer": f"All models in the fallback chain failed. Last error: {str(last_error)}", "sources": [], "reasoning": None}
 
 if __name__ == "__main__":
     # Test stub

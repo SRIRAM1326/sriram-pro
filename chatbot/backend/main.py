@@ -33,6 +33,7 @@ async def root():
 class ChatRequest(BaseModel):
     website_url: str
     question: str
+    use_reasoning: Optional[bool] = True
 
 class CrawlRequest(BaseModel):
     website_url: str
@@ -57,7 +58,11 @@ def process_website(website_url: str, max_pages: int):
         indexing_status[domain] = "ready"
         print(f"Index ready for {domain} with {chunks} chunks.")
     except Exception as e:
-        indexing_status[domain] = f"error: {str(e)}"
+        error_msg = str(e)
+        if any(err in error_msg.lower() for err in ["502", "503", "504", "bad gateway"]):
+            indexing_status[domain] = "error: NVIDIA AI service is temporarily unavailable. Please try again in 5 minutes."
+        else:
+            indexing_status[domain] = f"error: {error_msg}"
         print(f"Error processing {domain}: {e}")
 
 @app.post("/crawl")
@@ -86,6 +91,15 @@ async def chat(req: ChatRequest):
     
     # Check status
     current_status = indexing_status.get(domain)
+    
+    # NEW: Check disk for existing index if status is not ready (e.g. after restart)
+    if current_status != "ready":
+        engine = RAGEngine(domain)
+        if os.path.exists(engine.db_dir):
+            indexing_status[domain] = "ready"
+            current_status = "ready"
+            print(f"Index found on disk for {domain}. Marking as ready.")
+    
     if current_status != "ready":
         # Check if we should auto-trigger crawl
         if not current_status:
@@ -94,7 +108,7 @@ async def chat(req: ChatRequest):
     
     try:
         engine = RAGEngine(domain)
-        result = engine.get_answer(req.question)
+        result = engine.get_answer(req.question, use_reasoning=req.use_reasoning)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

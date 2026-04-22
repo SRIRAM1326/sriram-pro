@@ -1,0 +1,82 @@
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robust File Copy for Windows                              
+-------------------------------------------------------------------------------
+
+  Started : 22 April 2026 09:41:51
+   Source : C:\Users\sriram\Downloads\sriram-pro\chatbot\
+     Dest : C:\Users\sriram\Downloads\chatbot\
+
+    Files : *.*
+	    
+  Options : *.* /TEE /S /E /DCOPY:DA /COPY:DAT /PURGE /MIR /NP /MT:8 /R:3 /W:5 
+
+------------------------------------------------------------------------------
+
+	    Newer     		    3847	C:\Users\sriram\Downloads\sriram-pro\chatbot\README.md
+	    Newer     		     477	
+C:\Users\sriram\Downloads\sriram-pro\chatbot\backend\.env	*EXTRA Dir        -1	
+C:\Users\sriram\Downloads\chatbot\data\faiss\971259020c7065269ca3bb67b57a90e6\	    Newer     		    4251	
+C:\Users\sriram\Downloads\sriram-pro\chatbot\backend\main.py	  *EXTRA File 		    1581	C:\Users\sriram\Downloads\chatbot\data\faiss\971259020c7065269ca3bb67b57a90e6\index.faiss
+
+	  *EXTRA File 		     530	C:\Users\sriram\Downloads\chatbot\data\faiss\971259020c7065269ca3bb67b57a90e6\index.pkl	*EXTRA Dir        -1	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\
+	*EXTRA Dir        -1	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\
+	  *EXTRA File 		  495912	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\framer-motion.js
+	    Newer     		    7508	C:\Users\sriram\Downloads\sriram-pro\chatbot\backend\rag_engine.py
+	    Newer     		   91759	
+C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\package-lock.json
+	  *EXTRA File 		  925627		    Newer     		     687	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\vite.config.jsC:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\framer-motion.js.map
+	  *EXTRA File 		  813929	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\lucide-react.js
+	  *EXTRA File 		   2.0 m	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\lucide-react.js.map
+	  *EXTRA File 		      23	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\package.json
+	  *EXTRA File 		   39571	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react-B6J-hxuQ.js
+	  *EXTRA File 		   68017	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react-B6J-hxuQ.js.map
+	  *EXTRA File 		   14533	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react-dom.js
+	  *EXTRA File 		   25463	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react-dom.js.map
+	  *EXTRA File 		  820851	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react-dom_client.js
+	  *EXTRA File 		   1.4 m	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react-dom_client.js.map
+	  *EXTRA File 		      90	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react.js
+	  *EXTRA File 		   10476	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react_jsx-dev-runtime.js
+	  *EXTRA File 		   17916	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react_jsx-dev-runtime.js.map
+	  *EXTRA File 		   10786	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react_jsx-runtime.js
+	  *EXTRA File 		   18480	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\react_jsx-runtime.js.map
+	  *EXTRA File 		    1423	C:\Users\sriram\Downloads\chatbot\widget\node_modules\.vite\deps\_metadata.json
+	    Newer     		   2.0 m	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\dist\widget.iife.js
+	    Newer     		   11403	C:\Users\sriram\Downloads\sriram-pro\chatbot\backend\__pycache__\rag_engine.cpython-314.pyc
+	    Newer     		   2.0 m	C:\Users\sriram\Downloads\sriram-pro\chatbot\backend\static\widget.iife.js
+	    Newer     		    5710	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\src\App.jsx
+	    Newer     		    4284	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\src\index.css
+	    New File  		  689380	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\src\assets\avatar.png
+	    New File  		  149037	C:\Users\sriram\Downloads\sriram-pro\chatbot\data\faiss\1a783b04dfc402e8af7b409b622bc50d\index.faiss
+	    New File  		  108602	C:\Users\sriram\Downloads\sriram-pro\chatbot\data\faiss\1a783b04dfc402e8af7b409b622bc50d\index.pkl
+	    Newer     		    1581	C:\Users\sriram\Downloads\sriram-pro\chatbot\data\faiss\7c4d7cd5a6c414c46cb039d07d20f64e\index.faiss
+	    Newer     		     468	C:\Users\sriram\Downloads\sriram-pro\chatbot\data\faiss\7c4d7cd5a6c414c46cb039d07d20f64e\index.pkl
+	    Newer     		   91952	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\.package-lock.json
+	    New File  		     822	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\CopyrightNotice.txt
+	    New File  		     655	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\LICENSE.txt
+	    New File  		    1219	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\package.json
+	    New File  		    4033	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\README.md
+	    New File  		    2757	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\SECURITY.md
+	    New File  		   18317	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\tslib.d.ts
+	    New File  		      36	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\tslib.es6.html
+	    New File  		   19215	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\tslib.es6.js
+	    New File  		   17648	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\tslib.es6.mjs
+	    New File  		      32	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\tslib.html
+	    New File  		   23382	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\tslib.js
+	    New File  		     801	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\modules\index.d.ts
+	    New File  		    1416	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\modules\index.js
+	    New File  		      26	C:\Users\sriram\Downloads\sriram-pro\chatbot\widget\node_modules\tslib\modules\package.json
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :       629       629       626         0         0         3
+   Files :      9192        31      9161         0         0        19
+   Bytes :  118.32 m    5.32 m  112.99 m         0         0    6.57 m
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+
+
+   Speed :           3,65,10,960 Bytes/sec.
+   Speed :             2,089.174 MegaBytes/min.
+   Ended : 22 April 2026 09:41:52
+

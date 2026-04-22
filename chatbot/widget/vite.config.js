@@ -7,6 +7,13 @@ export default defineConfig({
     react(),
     cssInjectedByJsPlugin(),
   ],
+  server: {
+    proxy: {
+      '/chat': 'http://localhost:8000',
+      '/crawl': 'http://localhost:8000',
+      '/status': 'http://localhost:8000',
+    }
+  },
   build: {
     lib: {
       entry: 'src/main.jsx',
